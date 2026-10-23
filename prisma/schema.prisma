@@ -1,0 +1,181 @@
+// Prisma schema for Scout Moot 2026 - Safe from Harm
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // Used by `prisma migrate` against Neon (direct, non-pooled connection).
+  directUrl = env("DIRECT_URL")
+}
+
+enum Section {
+  CUB
+  SCOUT
+  ROVER
+  LEADER
+}
+
+enum AdminRole {
+  SUPERADMIN
+  SAFEGUARDING
+  VIEWER
+}
+
+enum StepType {
+  MCQ
+  REFLECTION
+}
+
+model Participant {
+  id              String    @id @default(cuid())
+  fullNameBn      String
+  nameEn          String
+  scoutId         String    @unique
+  unit            String
+  district        String
+  section         Section
+  phone           String?   @unique
+  email           String?
+  isMinor         Boolean   @default(false)
+  guardianConsent Boolean   @default(false)
+  consentAt       DateTime
+  resumeCode      String    @unique
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  moduleProgress ModuleProgress[]
+  stepProgress   StepProgress[]
+  certificates   Certificate[]
+
+  @@index([section])
+  @@index([district])
+  @@index([createdAt])
+}
+
+model Module {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  order         Int
+  titleBn       String
+  titleEn       String
+  descriptionBn String
+  descriptionEn String
+  videoProvider String   @default("youtube")
+  videoId       String
+  passMark      Int?
+  published     Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  steps    Step[]
+  progress ModuleProgress[]
+
+  @@index([order])
+}
+
+model Step {
+  id              String   @id @default(cuid())
+  moduleId        String
+  order           Int
+  type            StepType
+  promptBn        String
+  promptEn        String
+  options         Json?
+  correctOptionId String?
+  minWords        Int      @default(30)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  module   Module         @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress StepProgress[]
+
+  @@unique([moduleId, order])
+  @@index([moduleId])
+}
+
+model ModuleProgress {
+  id             String    @id @default(cuid())
+  participantId  String
+  moduleId       String
+  startedAt      DateTime  @default(now())
+  videoWatchedAt DateTime?
+  completedAt    DateTime?
+
+  participant Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  module      Module      @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([participantId, moduleId])
+  @@index([participantId])
+  @@index([moduleId])
+}
+
+model StepProgress {
+  id              String    @id @default(cuid())
+  participantId   String
+  stepId          String
+  moduleId        String
+  answerJson      Json?
+  isCorrect       Boolean?
+  wordCount       Int?
+  // Sensitive free-text reflection, AES-256-GCM encrypted at rest.
+  reflectionCipher String?  @db.Text
+  completedAt     DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  participant Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  step        Step        @relation(fields: [stepId], references: [id], onDelete: Cascade)
+
+  @@unique([participantId, stepId])
+  @@index([participantId])
+  @@index([moduleId])
+}
+
+model Certificate {
+  id             String    @id
+  participantId  String
+  issuedAt       DateTime  @default(now())
+  revokedAt      DateTime?
+  revokedReason  String?
+  replacesId     String?
+  // Set to participantId while active, null when revoked. Unique constraint
+  // guarantees at most one active certificate per participant.
+  activeKey      String?   @unique
+
+  participant Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@index([participantId])
+  @@index([issuedAt])
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         AdminRole @default(VIEWER)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model AuditLog {
+  id         String    @id @default(cuid())
+  actorEmail String
+  actorRole  AdminRole
+  action     String
+  targetType String
+  targetId   String
+  createdAt  DateTime  @default(now())
+
+  @@index([createdAt])
+  @@index([action])
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}

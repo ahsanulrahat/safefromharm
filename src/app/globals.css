@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), var(--font-noto-bengali), ui-sans-serif,
+    system-ui, sans-serif;
+
+  --color-brand-50: #f0f8f2;
+  --color-brand-100: #dcefe2;
+  --color-brand-200: #b9dfc5;
+  --color-brand-300: #8ac9a3;
+  --color-brand-400: #56ab7e;
+  --color-brand-500: #338e60;
+  --color-brand-600: #23724c;
+  --color-brand-700: #1d5b3e;
+  --color-brand-800: #194934;
+  --color-brand-900: #153d2c;
+  --color-brand-950: #0a2218;
+
+  --color-gold-50: #fdf9ed;
+  --color-gold-100: #f9efcf;
+  --color-gold-200: #f1dc9b;
+  --color-gold-300: #e7c25f;
+  --color-gold-400: #dba934;
+  --color-gold-500: #c78f22;
+  --color-gold-600: #a66d1b;
+  --color-gold-700: #85511a;
+  --color-gold-800: #6f421c;
+  --color-gold-900: #5e381b;
+
+  --color-cream: #fbfaf6;
+  --color-ink: #17211b;
+  --color-muted: #5c6b62;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-gold-400);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-brand-200);
+    color: var(--color-brand-950);
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    border-radius: 0.5rem;
+    background: var(--color-brand-800);
+    color: white;
+    padding: 0.6rem 1rem;
+    transition: top 120ms ease;
+  }
+
+  .skip-link:focus {
+    top: 1rem;
+  }
+}
