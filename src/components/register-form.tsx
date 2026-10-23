@@ -1,0 +1,292 @@
+"use client";
+
+import { useActionState, useState } from "react";
+import { useTranslations } from "next-intl";
+import { registerAction, type RegisterState } from "@/actions/register";
+import { buttonClass, errorClass, hintClass, inputClass, labelClass } from "@/components/ui";
+import type { AppLocale } from "@/i18n/routing";
+
+const initialState: RegisterState = {};
+
+export function RegisterForm({ locale }: { locale: AppLocale }) {
+  const t = useTranslations("register");
+  const [state, action, pending] = useActionState(registerAction, initialState);
+  const [isMinor, setIsMinor] = useState(state.values?.isMinor === "on");
+
+  function fieldError(name: string) {
+    return state.fieldErrors?.[name];
+  }
+
+  function errorProps(name: string) {
+    const message = fieldError(name);
+    return {
+      "aria-invalid": Boolean(message),
+      "aria-describedby": message ? `${name}-error` : undefined,
+    } as const;
+  }
+
+  return (
+    <form action={action} className="space-y-5" noValidate>
+      <input type="hidden" name="locale" value={locale} />
+      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+        <label htmlFor="website">Website</label>
+        <input id="website" name="website" tabIndex={-1} autoComplete="off" />
+      </div>
+
+      {state.error && (
+        <div
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800"
+        >
+          {state.error}
+        </div>
+      )}
+
+      {state.fieldErrors && (
+        <p className="text-sm font-semibold text-red-800" role="status">
+          {t("errorTitle")}
+        </p>
+      )}
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <label className={labelClass} htmlFor="fullNameBn">
+            {t("fullNameBn")} <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="fullNameBn"
+            name="fullNameBn"
+            type="text"
+            required
+            autoComplete="name"
+            lang="bn"
+            defaultValue={state.values?.fullNameBn}
+            className={inputClass}
+            {...errorProps("fullNameBn")}
+          />
+          <p className={hintClass}>{t("fullNameBnHint")}</p>
+          {fieldError("fullNameBn") && (
+            <p id="fullNameBn-error" className={errorClass}>
+              {fieldError("fullNameBn")}
+            </p>
+          )}
+        </div>
+
+        <div className="sm:col-span-2">
+          <label className={labelClass} htmlFor="nameEn">
+            {t("nameEn")} <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="nameEn"
+            name="nameEn"
+            type="text"
+            required
+            autoComplete="off"
+            spellCheck={false}
+            pattern="[A-Za-z][A-Za-z .'\-]{1,79}"
+            defaultValue={state.values?.nameEn}
+            className={inputClass}
+            {...errorProps("nameEn")}
+          />
+          <p className={hintClass}>{t("nameEnHint")}</p>
+          {fieldError("nameEn") && (
+            <p id="nameEn-error" className={errorClass}>
+              {fieldError("nameEn")}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className={labelClass} htmlFor="scoutId">
+            {t("scoutId")} <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="scoutId"
+            name="scoutId"
+            type="text"
+            required
+            autoCapitalize="characters"
+            autoComplete="off"
+            defaultValue={state.values?.scoutId}
+            className={inputClass}
+            {...errorProps("scoutId")}
+          />
+          <p className={hintClass}>{t("scoutIdHint")}</p>
+          {fieldError("scoutId") && (
+            <p id="scoutId-error" className={errorClass}>
+              {fieldError("scoutId")}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className={labelClass} htmlFor="unit">
+            {t("unit")} <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="unit"
+            name="unit"
+            type="text"
+            required
+            autoComplete="organization"
+            defaultValue={state.values?.unit}
+            className={inputClass}
+            {...errorProps("unit")}
+          />
+          {fieldError("unit") && (
+            <p id="unit-error" className={errorClass}>
+              {fieldError("unit")}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className={labelClass} htmlFor="district">
+            {t("district")} <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="district"
+            name="district"
+            type="text"
+            required
+            autoComplete="address-level1"
+            defaultValue={state.values?.district}
+            className={inputClass}
+            {...errorProps("district")}
+          />
+          {fieldError("district") && (
+            <p id="district-error" className={errorClass}>
+              {fieldError("district")}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className={labelClass} htmlFor="section">
+            {t("section")} <span aria-hidden="true">*</span>
+          </label>
+          <select
+            id="section"
+            name="section"
+            required
+            defaultValue={state.values?.section ?? ""}
+            className={inputClass}
+            {...errorProps("section")}
+          >
+            <option value="" disabled>
+              {t("sectionPlaceholder")}
+            </option>
+            <option value="CUB">{t("sections.cub")}</option>
+            <option value="SCOUT">{t("sections.scout")}</option>
+            <option value="ROVER">{t("sections.rover")}</option>
+            <option value="LEADER">{t("sections.leader")}</option>
+          </select>
+          {fieldError("section") && (
+            <p id="section-error" className={errorClass}>
+              {fieldError("section")}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className={labelClass} htmlFor="phone">
+            {t("phone")}
+          </label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            defaultValue={state.values?.phone}
+            className={inputClass}
+            {...errorProps("phone")}
+          />
+          {fieldError("phone") && (
+            <p id="phone-error" className={errorClass}>
+              {fieldError("phone")}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className={labelClass} htmlFor="email">
+            {t("email")}
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            defaultValue={state.values?.email}
+            className={inputClass}
+            {...errorProps("email")}
+          />
+          {fieldError("email") && (
+            <p id="email-error" className={errorClass}>
+              {fieldError("email")}
+            </p>
+          )}
+        </div>
+        <p className="text-xs text-muted sm:col-span-2">{t("contactHint")}</p>
+      </div>
+
+      <fieldset className="space-y-3 rounded-xl border border-brand-100 bg-brand-50/50 p-4">
+        <legend className="px-1 text-sm font-bold text-brand-900">
+          {t("consentTitle")}
+        </legend>
+        <label className="flex items-start gap-3 text-sm text-brand-950">
+          <input
+            type="checkbox"
+            name="isMinor"
+            checked={isMinor}
+            onChange={(event) => setIsMinor(event.target.checked)}
+            className="mt-0.5 h-5 w-5 rounded border-brand-300 text-brand-700 focus:ring-brand-300"
+          />
+          <span>{t("minorLabel")}</span>
+        </label>
+        {isMinor && (
+          <label className="flex items-start gap-3 text-sm text-brand-950">
+            <input
+              type="checkbox"
+              name="guardianConsent"
+              defaultChecked={state.values?.guardianConsent === "on"}
+              className="mt-0.5 h-5 w-5 rounded border-brand-300 text-brand-700 focus:ring-brand-300"
+              aria-describedby="guardianConsent-error"
+            />
+            <span>
+              {t("guardianLabel")}
+              {fieldError("guardianConsent") && (
+                <span id="guardianConsent-error" className="mt-1 block text-sm font-medium text-red-700" role="alert">
+                  {fieldError("guardianConsent")}
+                </span>
+              )}
+            </span>
+          </label>
+        )}
+        <label className="flex items-start gap-3 text-sm font-medium text-brand-950">
+          <input
+            type="checkbox"
+            name="consent"
+            defaultChecked={state.values?.consent === "on"}
+            className="mt-0.5 h-5 w-5 rounded border-brand-300 text-brand-700 focus:ring-brand-300"
+            aria-describedby="consent-error"
+          />
+          <span>
+            {t("consent")}
+            {fieldError("consent") && (
+              <span id="consent-error" className="mt-1 block text-sm font-medium text-red-700" role="alert">
+                {fieldError("consent")}
+              </span>
+            )}
+          </span>
+        </label>
+      </fieldset>
+
+      <button type="submit" disabled={pending} className={buttonClass("primary") + " w-full"}>
+        {pending ? t("submitting") : t("submit")}
+      </button>
+    </form>
+  );
+}
