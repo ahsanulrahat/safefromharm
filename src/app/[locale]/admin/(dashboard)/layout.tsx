@@ -4,7 +4,6 @@ import { requireAdmin } from "@/lib/admin";
 import { logoutAction } from "@/actions/auth";
 import { CompassMark } from "@/components/icons";
 import { SafeguardingBox } from "@/components/safeguarding-box";
-import type { AppLocale } from "@/i18n/routing";
 
 export const dynamic = "force-dynamic";
 
