@@ -134,12 +134,24 @@ confirmed with the organizers before launch.
 
 ## Deployment (Vercel + Neon)
 
+Current production deployment (Vercel CLI):
+
+- URL: https://scout-moot-2026.vercel.app
+- Vercel project: `ahsanulrahats-projects/scout-moot-2026`
+- Database: Neon Postgres provisioned through the Vercel Marketplace
+  integration (`neon-bisque-clock`)
+- Health check: https://scout-moot-2026.vercel.app/api/health
+
+### Reproducing the deployment
+
 1. Create a Neon project and copy the **pooled** and **direct** connection
-   strings.
-2. Push this repository to GitHub and import it into Vercel.
+   strings, or install the Neon integration from the Vercel Marketplace.
+2. Push this repository to GitHub and import it into Vercel, or deploy with the
+   Vercel CLI.
 3. Add all environment variables from `.env.example` to Vercel
    (Production and Preview as appropriate). Set `NEXT_PUBLIC_SITE_URL` to the
-   production domain.
+   production domain. With the Neon integration, `DATABASE_URL` is provided;
+   set `DIRECT_URL` to the unpooled connection string.
 4. Run migrations against Neon from a trusted machine:
 
    ```bash
@@ -171,6 +183,11 @@ confirmed with the organizers before launch.
 ## Known gaps / launch TODOs
 
 - Replace the three SAMPLE modules with official Safe from Harm content.
+- Replace the placeholder `SAFEGUARDING_CONTACT` in Vercel before launch.
+- Replace the seeded `admin@example.org` account with an organizer-owned email
+  and rotate the generated password.
+- Connect the GitHub repository to the Vercel project for Git-based deploys and
+  previews (the current deployment was made with the Vercel CLI).
 - Confirm A B M Abdus Sattar's official designation and update
   `CONFIG.signatoryTitle`.
 - Add the real signature and logo PNGs to `public/`.
@@ -179,5 +196,7 @@ confirmed with the organizers before launch.
   screen instead of sending it.
 - The public privacy notice is inline in the registration page; have it
   reviewed by the organizers before launch.
+- The production database currently contains live smoke-test registrations
+  (`SMOKE-*` Scout IDs). Remove them before sharing organizer reports.
 - No automated end-to-end browser test is included; use the smoke-test
   checklist above.
