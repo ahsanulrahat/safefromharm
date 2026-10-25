@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { generateCertificate } from "@/lib/certificate";
 import { rateLimit } from "@/lib/rate-limit";
 import { ipFromRequest } from "@/lib/request";
+import { safeErrorDetails } from "@/lib/safe-log";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -54,7 +55,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("Certificate generation failed", error);
+    console.error("Certificate generation failed", safeErrorDetails(error));
     return new Response("Could not generate certificate", { status: 500 });
   }
 }

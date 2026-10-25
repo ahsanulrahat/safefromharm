@@ -250,6 +250,32 @@ export function RegisterForm({ locale }: { locale: AppLocale }) {
             )}
           </span>
         </label>
+        <label className="flex items-start gap-3 text-sm font-medium text-brand-950 dark:text-brand-100 cursor-pointer">
+          <input
+            type="checkbox"
+            name="isMinor"
+            defaultChecked={state.values?.isMinor === "on"}
+            className="mt-0.5 h-5 w-5 rounded border-brand-300 text-brand-700 accent-brand-700 focus:ring-brand-300"
+          />
+          <span className="leading-relaxed">{t("minorLabel")}</span>
+        </label>
+        <label className="flex items-start gap-3 text-sm font-medium text-brand-950 dark:text-brand-100 cursor-pointer">
+          <input
+            type="checkbox"
+            name="guardianConsent"
+            defaultChecked={state.values?.guardianConsent === "on"}
+            className="mt-0.5 h-5 w-5 rounded border-brand-300 text-brand-700 accent-brand-700 focus:ring-brand-300"
+            aria-describedby="guardianConsent-error"
+          />
+          <span className="leading-relaxed">
+            {t("guardianLabel")}
+            {fieldError("guardianConsent") && (
+              <span id="guardianConsent-error" className="mt-1 block text-sm font-semibold text-red-600 dark:text-red-400" role="alert">
+                {fieldError("guardianConsent")}
+              </span>
+            )}
+          </span>
+        </label>
       </fieldset>
 
       <button type="submit" disabled={pending} className={buttonClass("primary") + " w-full py-3.5 shadow-sm"}>

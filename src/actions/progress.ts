@@ -6,6 +6,7 @@ import { getParticipantId } from "@/lib/participant-session";
 import { getCourseState, recalcParticipant } from "@/lib/course";
 import { countWords } from "@/lib/text";
 import { encryptText } from "@/lib/crypto";
+import { safeErrorDetails } from "@/lib/safe-log";
 
 export type ProgressState = {
   ok?: boolean;
@@ -79,7 +80,7 @@ export async function markVideoWatchedAction(
     refreshCoursePaths();
     return { ok: true, saved: true };
   } catch (error) {
-    console.error("markVideoWatched failed", error);
+    console.error("markVideoWatched failed", safeErrorDetails(error));
     return { error: "Could not save video progress." };
   }
 }
@@ -142,7 +143,7 @@ export async function submitMcqAction(
     if (stillLocked) return { error: "Module is locked." };
     return { ok: true, correct: isCorrect };
   } catch (error) {
-    console.error("submitMcq failed", error);
+    console.error("submitMcq failed", safeErrorDetails(error));
     return { error: "Could not save your answer. Please try again." };
   }
 }
@@ -197,7 +198,7 @@ export async function submitReflectionAction(
     refreshCoursePaths();
     return { ok: true, saved: true, wordCount: words };
   } catch (error) {
-    console.error("submitReflection failed", error);
+    console.error("submitReflection failed", safeErrorDetails(error));
     return { error: "Could not save your reflection. Please try again." };
   }
 }

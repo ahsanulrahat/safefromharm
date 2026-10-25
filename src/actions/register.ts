@@ -9,6 +9,7 @@ import { newResumeCode, normalizeEmail, normalizePhone, normalizeScoutId } from 
 import { setParticipantSession } from "@/lib/participant-session";
 import { getClientIp } from "@/lib/request";
 import { rateLimit } from "@/lib/rate-limit";
+import { safeErrorDetails } from "@/lib/safe-log";
 
 export type RegisterState = {
   error?: string;
@@ -156,7 +157,7 @@ export async function registerAction(
         values,
       };
     }
-    console.error("Registration failed", error);
+    console.error("Registration failed", safeErrorDetails(error));
     return { error: t("generic"), values };
   }
 
