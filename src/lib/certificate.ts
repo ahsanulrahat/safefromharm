@@ -25,10 +25,11 @@ const CONFIG = {
   logoFile: "scout-logo.png",
 };
 
-const GREEN = rgb(0.0, 0.33, 0.2);
-const GOLD = rgb(0.72, 0.58, 0.25);
-const INK = rgb(0.12, 0.12, 0.14);
-const MUTED = rgb(0.4, 0.4, 0.45);
+const GREEN = rgb(0.0, 0.4157, 0.3059); // #006A4E
+const ACCENT_RED = rgb(0.7843, 0.0627, 0.1804); // #C8102E
+const GOLD = ACCENT_RED;
+const INK = rgb(0.0784, 0.1255, 0.1059); // #14201B
+const MUTED = rgb(0.3569, 0.4196, 0.3882); // #5B6B63
 
 export function newCertificateId() {
   // e.g. SFH26-K7M2QX9A (no confusing chars like 0/O/1/I)

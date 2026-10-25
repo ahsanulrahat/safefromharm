@@ -78,6 +78,7 @@ export async function saveModuleAction(
           : await tx.module.create({
               data: {
                 slug: data.slug,
+                audience: data.audience,
                 order:
                   ((
                     await tx.module.aggregate({ _max: { order: true } })

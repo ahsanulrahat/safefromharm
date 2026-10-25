@@ -11,7 +11,7 @@ export type RegistrationMessages = {
   scoutId: string;
   unit: string;
   district: string;
-  section: string;
+  memberType: string;
   phone: string;
   email: string;
   contact: string;
@@ -36,8 +36,8 @@ export function registrationSchema(m: RegistrationMessages) {
         .regex(/^[A-Z0-9-]{4,30}$/, m.scoutId),
       unit: z.string().trim().min(2, m.unit).max(120),
       district: z.string().trim().min(2, m.district).max(120),
-      section: z.enum(["CUB", "SCOUT", "ROVER", "LEADER"], {
-        error: m.section,
+      memberType: z.enum(["ROVER", "LEADER"], {
+        error: m.memberType,
       }),
       phone: z.string().trim().regex(phonePattern, m.phone).optional(),
       email: z.string().trim().regex(emailPattern, m.email).optional(),
@@ -133,6 +133,7 @@ export const contentModuleSchema = z.object({
     .min(2)
     .max(80)
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers and hyphens."),
+  audience: z.enum(["ROVER", "LEADER"]),
   titleBn: z.string().trim().min(1).max(200),
   titleEn: z.string().trim().min(1).max(200),
   descriptionBn: z.string().trim().max(4000),

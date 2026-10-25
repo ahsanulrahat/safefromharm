@@ -1,14 +1,14 @@
-import { Prisma, type Section } from "@prisma/client";
+import { Prisma, type Audience } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export const PAGE_SIZE = 20;
-export const SECTIONS: Section[] = ["CUB", "SCOUT", "ROVER", "LEADER"];
+export const AUDIENCES: Audience[] = ["ROVER", "LEADER"];
 
 export type CertificateFilter = "all" | "active" | "revoked" | "none";
 
 export type ParticipantFilters = {
   q: string;
-  section: Section | "";
+  audience: Audience | "";
   district: string;
   cert: CertificateFilter;
   page: number;
@@ -33,9 +33,11 @@ function clampPage(value: string | string[] | undefined) {
 export function parseParticipantFilters(
   input: Record<string, string | string[] | undefined>
 ): ParticipantFilters {
-  const rawSection = first(input.section).toUpperCase();
-  const section = (SECTIONS as string[]).includes(rawSection)
-    ? (rawSection as Section)
+  const rawAudience =
+    first(input.audience) || first(input.section);
+  const audienceUpper = rawAudience.toUpperCase();
+  const audience = (AUDIENCES as string[]).includes(audienceUpper)
+    ? (audienceUpper as Audience)
     : "";
   const rawCert = first(input.cert);
   const cert: CertificateFilter = (
@@ -46,7 +48,7 @@ export function parseParticipantFilters(
 
   return {
     q: first(input.q).trim().slice(0, 80),
-    section,
+    audience,
     district: first(input.district).trim().slice(0, 80),
     cert,
     page: clampPage(input.page),
@@ -82,7 +84,7 @@ export function participantWhere(
       { district: { contains: q, mode: "insensitive" } },
     ];
   }
-  if (filters.section) where.section = filters.section;
+  if (filters.audience) where.audience = filters.audience;
   if (filters.district) where.district = filters.district;
 
   switch (filters.cert) {
@@ -108,7 +110,7 @@ export function participantQueryString(
 ) {
   const params = new URLSearchParams();
   if (filters.q) params.set("q", filters.q);
-  if (filters.section) params.set("section", filters.section);
+  if (filters.audience) params.set("audience", filters.audience);
   if (filters.district) params.set("district", filters.district);
   if (filters.cert && filters.cert !== "all") params.set("cert", filters.cert);
   const targetPage = page ?? filters.page;
@@ -154,7 +156,7 @@ export async function listParticipants(filters: ParticipantFilters) {
       scoutId: true,
       unit: true,
       district: true,
-      section: true,
+      audience: true,
       createdAt: true,
       isMinor: true,
     },
@@ -316,7 +318,7 @@ export async function getDashboardData() {
       take: 8,
     }),
     prisma.participant.groupBy({
-      by: ["section"],
+      by: ["audience"],
       _count: { _all: true },
     }),
     prisma.module.findMany({
@@ -367,12 +369,13 @@ export async function getDashboardData() {
     completedGroups.map((row) => [row.moduleId, row._count._all])
   );
 
-  const sectionOrder = new Map(SECTIONS.map((section, index) => [section, index]));
-  const sections = sectionGroups
-    .map((row) => ({ name: row.section, count: row._count._all }))
+  const audienceOrder = new Map(AUDIENCES.map((audience, index) => [audience, index]));
+  const audiences = sectionGroups
+    .map((row) => ({ name: (row as any).audience as string, count: row._count._all }))
     .sort(
       (a, b) =>
-        (sectionOrder.get(a.name) ?? 0) - (sectionOrder.get(b.name) ?? 0)
+        (audienceOrder.get(a.name as Audience) ?? 0) -
+        (audienceOrder.get(b.name as Audience) ?? 0)
     );
 
   return {
@@ -389,7 +392,8 @@ export async function getDashboardData() {
       count: row._count._all,
     })),
     units: units.map((row) => ({ name: row.unit, count: row._count._all })),
-    sections,
+    sections: audiences,
+    audiences,
     funnel: modules.map((module) => ({
       name: `M${module.order + 1} · ${module.titleEn.slice(0, 18)}`,
       started: started.get(module.id) ?? 0,

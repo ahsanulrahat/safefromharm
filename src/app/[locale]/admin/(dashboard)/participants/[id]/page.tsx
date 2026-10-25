@@ -11,13 +11,11 @@ import {
 import { formatDate, formatDateTime } from "@/lib/format";
 import { buttonClass, cardClass } from "@/components/ui";
 import type { AppLocale } from "@/i18n/routing";
-import type { Section } from "@prisma/client";
+import type { Audience } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
-const sectionKey: Record<Section, "cub" | "scout" | "rover" | "leader"> = {
-  CUB: "cub",
-  SCOUT: "scout",
+const audienceKey: Record<Audience, "rover" | "leader"> = {
   ROVER: "rover",
   LEADER: "leader",
 };
@@ -97,8 +95,8 @@ export default async function ParticipantDetailPage({
           <Detail label={t("unit")} value={participant.unit} />
           <Detail label={t("district")} value={participant.district} />
           <Detail
-            label={t("section")}
-            value={tr(`sections.${sectionKey[participant.section]}`)}
+            label={t("memberType") ?? t("section")}
+            value={(() => { const a = (participant as any).audience as Audience | undefined; return a ? tr(`memberTypes.${audienceKey[a]}`) : "-" })()}
           />
           <Detail
             label={t("phone")}

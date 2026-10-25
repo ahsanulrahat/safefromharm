@@ -40,3 +40,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# fonts provided by organizer (never fabricate)
+/assets/fonts/*.ttf
+/assets/fonts/*.otf
+/public/fonts/*.ttf
+/public/fonts/*.otf
+/public/signature*.png
+/public/scout-logo.png

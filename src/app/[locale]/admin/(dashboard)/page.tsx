@@ -150,10 +150,10 @@ export default async function AdminDashboardPage({
             />
           </Panel>
         </div>
-        <Panel title={t("bySection")}>
-          {data.sections.length ? (
+        <Panel title={t("byMemberType") ?? t("bySection")}>
+          {(data.sections?.length || (data as any).audiences?.length) ? (
             <SectionChart
-              data={data.sections.map((row) => ({
+              data={((data as any).audiences || data.sections).map((row: any) => ({
                 name: row.name,
                 count: row.count,
               }))}

@@ -7,12 +7,12 @@ import {
   PAGE_SIZE,
   parseParticipantFilters,
   participantQueryString,
-  SECTIONS,
+  AUDIENCES,
 } from "@/lib/admin-queries";
 import { buttonClass, cardClass, inputClass, labelClass } from "@/components/ui";
 import { formatDate } from "@/lib/format";
 import type { AppLocale } from "@/i18n/routing";
-import type { Section } from "@prisma/client";
+import type { Audience } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -21,9 +21,7 @@ export async function generateMetadata() {
   return { title: t("title"), robots: { index: false } };
 }
 
-const sectionKey: Record<Section, "cub" | "scout" | "rover" | "leader"> = {
-  CUB: "cub",
-  SCOUT: "scout",
+const audienceKey: Record<Audience, "rover" | "leader"> = {
   ROVER: "rover",
   LEADER: "leader",
 };
@@ -89,19 +87,19 @@ export default async function ParticipantsPage({
             />
           </div>
           <div className="md:col-span-2">
-            <label className={labelClass} htmlFor="section">
-              {t("section")}
+            <label className={labelClass} htmlFor="audience">
+              {t("memberType") ?? t("section")}
             </label>
             <select
-              id="section"
-              name="section"
-              defaultValue={filters.section}
+              id="audience"
+              name="audience"
+              defaultValue={filters.audience}
               className={inputClass}
             >
-              <option value="">{t("allSections")}</option>
-              {SECTIONS.map((section) => (
-                <option key={section} value={section}>
-                  {tr(`sections.${sectionKey[section]}`)}
+              <option value="">{t("allSections") ?? t("all")}</option>
+              {AUDIENCES.map((audience) => (
+                <option key={audience} value={audience}>
+                  {tr(`memberTypes.${audienceKey[audience]}`)}
                 </option>
               ))}
             </select>
@@ -205,7 +203,7 @@ export default async function ParticipantsPage({
                     <div className="text-xs text-muted">{participant.unit}</div>
                   </td>
                   <td className="px-4 py-3">
-                    {tr(`sections.${sectionKey[participant.section]}`)}
+                    {(() => { const a = (participant as any).audience as Audience | undefined; return a ? tr(`memberTypes.${audienceKey[a]}`) : "-" })()}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
                     <span className="font-semibold text-brand-900">

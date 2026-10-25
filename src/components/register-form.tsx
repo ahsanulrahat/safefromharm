@@ -162,28 +162,26 @@ export function RegisterForm({ locale }: { locale: AppLocale }) {
         </div>
 
         <div>
-          <label className={labelClass} htmlFor="section">
-            {t("section")} <span aria-hidden="true">*</span>
+          <label className={labelClass} htmlFor="memberType">
+            {t("memberType")} <span aria-hidden="true">*</span>
           </label>
           <select
-            id="section"
-            name="section"
+            id="memberType"
+            name="memberType"
             required
-            defaultValue={state.values?.section ?? ""}
+            defaultValue={state.values?.memberType ?? ""}
             className={inputClass}
-            {...errorProps("section")}
+            {...errorProps("memberType")}
           >
             <option value="" disabled>
-              {t("sectionPlaceholder")}
+              {t("memberTypePlaceholder")}
             </option>
-            <option value="CUB">{t("sections.cub")}</option>
-            <option value="SCOUT">{t("sections.scout")}</option>
-            <option value="ROVER">{t("sections.rover")}</option>
-            <option value="LEADER">{t("sections.leader")}</option>
+            <option value="ROVER">{t("memberTypes.rover")}</option>
+            <option value="LEADER">{t("memberTypes.leader")}</option>
           </select>
-          {fieldError("section") && (
-            <p id="section-error" className={errorClass}>
-              {fieldError("section")}
+          {fieldError("memberType") && (
+            <p id="memberType-error" className={errorClass}>
+              {fieldError("memberType")}
             </p>
           )}
         </div>

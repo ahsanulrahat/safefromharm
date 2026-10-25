@@ -38,8 +38,9 @@ export type CourseState = {
 };
 
 export async function getCourseState(participantId: string): Promise<CourseState> {
-  const [modules, defaultPassMark, moduleProgress, stepProgress, certificates] =
+  const [participant, modules, defaultPassMark, moduleProgress, stepProgress, certificates] =
     await Promise.all([
+      prisma.participant.findUnique({ where: { id: participantId } }),
       prisma.module.findMany({
         where: { published: true },
         orderBy: { order: "asc" },
@@ -54,6 +55,10 @@ export async function getCourseState(participantId: string): Promise<CourseState
       }),
     ]);
 
+  const audienceModules = participant?.audience
+    ? modules.filter((m) => (m as any).audience === participant.audience)
+    : modules;
+
   const watchedModuleIds = new Set(
     moduleProgress.filter((p) => p.videoWatchedAt).map((p) => p.moduleId)
   );
@@ -64,7 +69,7 @@ export async function getCourseState(participantId: string): Promise<CourseState
     wordCount: p.wordCount,
   }));
 
-  const modulesForCompletion: ModuleForCompletion[] = modules.map((m) => ({
+  const modulesForCompletion: ModuleForCompletion[] = audienceModules.map((m) => ({
     id: m.id,
     passMark: m.passMark,
     steps: m.steps.map((s) => ({
@@ -83,10 +88,14 @@ export async function getCourseState(participantId: string): Promise<CourseState
 
   // Modules unlock in order; module 0 is always open.
   const unlocked: Record<string, boolean> = {};
-  modules.forEach((m, index) => {
-    unlocked[m.id] = index === 0 || Boolean(moduleProgress.find(
-      (p) => p.moduleId === modules[index - 1]?.id && p.completedAt
-    ));
+  audienceModules.forEach((m, index) => {
+    unlocked[m.id] =
+      index === 0 ||
+      Boolean(
+        moduleProgress.find(
+          (p) => p.moduleId === audienceModules[index - 1]?.id && p.completedAt
+        )
+      );
   });
 
   const progressByStep = new Map(
@@ -117,7 +126,7 @@ export async function getCourseState(participantId: string): Promise<CourseState
   const active = certificates.find((c) => c.activeKey === participantId) ?? null;
 
   return {
-    modules,
+    modules: audienceModules,
     evaluations: evaluation.modules,
     unlocked,
     progressByStep,

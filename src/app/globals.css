@@ -1,20 +1,30 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter), var(--font-noto-bengali), ui-sans-serif,
-    system-ui, sans-serif;
+  --font-sans: "SiyamRupali", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", var(--font-inter), var(--font-noto-bengali), Inter, "Segoe UI", Roboto, sans-serif;
 
-  --color-brand-50: #f0f8f2;
-  --color-brand-100: #dcefe2;
+  --color-brand-50: #e6f2ee;
+  --color-brand-100: #cfe7df;
   --color-brand-200: #b9dfc5;
   --color-brand-300: #8ac9a3;
   --color-brand-400: #56ab7e;
   --color-brand-500: #338e60;
   --color-brand-600: #23724c;
-  --color-brand-700: #1d5b3e;
-  --color-brand-800: #194934;
-  --color-brand-900: #153d2c;
-  --color-brand-950: #0a2218;
+  --color-brand-700: #006a4e;
+  --color-brand-800: #005a41;
+  --color-brand-900: #003d2c;
+  --color-brand-950: #00271c;
+
+  --color-accent-50: #fbe9ec;
+  --color-accent-100: #f5c7cf;
+  --color-accent-200: #eea5b2;
+  --color-accent-300: #e78395;
+  --color-accent-400: #e06178;
+  --color-accent-500: #c8102e;
+  --color-accent-600: #a80d26;
+  --color-accent-700: #880a1f;
+  --color-accent-800: #680718;
+  --color-accent-900: #480511;
 
   --color-gold-50: #fdf9ed;
   --color-gold-100: #f9efcf;
@@ -27,14 +37,25 @@
   --color-gold-800: #6f421c;
   --color-gold-900: #5e381b;
 
-  --color-cream: #fbfaf6;
-  --color-ink: #17211b;
-  --color-muted: #5c6b62;
+  --color-cream: #fafbfa;
+  --color-surface: #fafbfa;
+  --color-ink: #14201b;
+  --color-muted: #5b6b63;
+  --color-border: #dde5e0;
 }
 
 @layer base {
   :root {
     color-scheme: light;
+  }
+
+  @font-face {
+    font-family: "SiyamRupali";
+    src: url("/fonts/SiyamRupali.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0980-09FF, U+0020-007E, U+0030-0039, U+002E-002E, U+002C-002C, U+0021-0021, U+003F-003F, U+002D-002D, U+003A-003A, U+003B-003B, U+0028-0029;
   }
 
   html {
@@ -46,6 +67,7 @@
     background-color: var(--color-cream);
     color: var(--color-ink);
     font-family: var(--font-sans);
+    line-height: 1.7;
     text-rendering: optimizeLegibility;
   }
 
@@ -57,6 +79,17 @@
   ::selection {
     background: var(--color-brand-200);
     color: var(--color-brand-950);
+  }
+
+  /* Avoid red text on green or vice versa */
+  .text-red-700,
+  .text-red-800 {
+    color: var(--color-accent-600);
+  }
+
+  .bg-green-700,
+  .bg-brand-700 {
+    background-color: var(--color-brand-700);
   }
 
   input,
