@@ -18,22 +18,33 @@ export default async function ResumePage({
   const t = await getTranslations("resume");
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
-      <Link href="/" className="text-sm font-semibold text-brand-700 hover:underline">
-        <span aria-hidden="true">←</span> Home
-      </Link>
-      <h1 className="mt-4 text-3xl font-black tracking-tight text-brand-950">
-        {t("title")}
-      </h1>
-      <p className="mt-2 max-w-xl text-muted">{t("subtitle")}</p>
+    <div className="relative mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+      {/* Decorative ambient background accents */}
+      <div className="pointer-events-none absolute -top-10 right-0 -z-10 h-72 w-72 rounded-full bg-brand-500/5 blur-3xl" />
+      <div className="pointer-events-none absolute top-48 left-0 -z-10 h-72 w-72 rounded-full bg-scout-red/5 blur-3xl" />
 
-      <div className="mt-6">
+      <Link
+        href="/"
+        className="group inline-flex items-center gap-2 rounded-xl border border-brand-200/80 bg-white/80 px-3.5 py-1.5 text-sm font-semibold text-brand-700 shadow-2xs backdrop-blur-sm transition-all hover:border-brand-300 hover:bg-brand-50 hover:text-brand-900"
+      >
+        <span aria-hidden="true" className="transition-transform group-hover:-translate-x-0.5">←</span>
+        Home
+      </Link>
+
+      <div className="mt-5">
+        <h1 className="text-3xl font-black tracking-tight text-brand-950 sm:text-4xl">
+          {t("title")}
+        </h1>
+        <p className="mt-2 max-w-xl text-base text-muted">{t("subtitle")}</p>
+      </div>
+
+      <div className="mt-7">
         <ResumeForms locale={locale} />
       </div>
 
-      <p className="mt-5 text-sm text-muted">
+      <p className="mt-6 text-center text-sm font-medium text-muted">
         {t("noAccount")}{" "}
-        <Link href="/register" className="font-semibold text-brand-700 underline">
+        <Link href="/register" className="font-semibold text-brand-700 underline underline-offset-2 hover:text-brand-900">
           {t("register")}
         </Link>
       </p>

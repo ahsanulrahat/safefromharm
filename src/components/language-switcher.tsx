@@ -19,27 +19,30 @@ export function LanguageSwitcher({ locale }: { locale: AppLocale }) {
 
   return (
     <div
-      className="flex items-center rounded-full border border-brand-200 bg-white p-0.5 text-xs font-semibold"
+      className="inline-flex items-center rounded-full border border-brand-200/90 bg-white/90 p-0.5 text-xs font-bold shadow-2xs backdrop-blur-sm"
       role="group"
       aria-label="Language"
     >
-      {(["bn", "en"] as const).map((code) => (
-        <button
-          key={code}
-          type="button"
-          onClick={() => change(code)}
-          disabled={pending}
-          aria-pressed={locale === code}
-          className={cn(
-            "rounded-full px-2.5 py-1 transition",
-            locale === code
-              ? "bg-brand-700 text-white"
-              : "text-brand-800 hover:bg-brand-50"
-          )}
-        >
-          {code === "bn" ? "বাংলা" : "EN"}
-        </button>
-      ))}
+      {(["bn", "en"] as const).map((code) => {
+        const isActive = locale === code;
+        return (
+          <button
+            key={code}
+            type="button"
+            onClick={() => change(code)}
+            disabled={pending}
+            aria-pressed={isActive}
+            className={cn(
+              "cursor-pointer rounded-full px-3 py-1 text-xs transition-all duration-200 active:scale-95",
+              isActive
+                ? "bg-gradient-to-r from-brand-700 to-brand-600 text-white shadow-xs"
+                : "text-brand-900 hover:bg-brand-50/80 hover:text-brand-950"
+            )}
+          >
+            {code === "bn" ? "বাংলা" : "EN"}
+          </button>
+        );
+      })}
     </div>
   );
 }

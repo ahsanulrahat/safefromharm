@@ -12,27 +12,29 @@ export async function SiteFooter() {
         <SafeguardingBox />
         <div className="mt-8 grid gap-6 text-sm text-muted sm:grid-cols-3">
           <div>
-            <div className="flex items-center gap-2 font-bold text-brand-900">
-              <CompassMark className="h-7 w-7 text-brand-700" />
+            <div className="flex items-center gap-2.5 font-bold text-brand-900">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 text-white shadow-sm">
+                <CompassMark className="h-5 w-5" />
+              </span>
               {t("brand")}
             </div>
-            <p className="mt-2 leading-relaxed">{t("footerNote")}</p>
+            <p className="mt-3 leading-relaxed">{t("footerNote")}</p>
           </div>
           <div>
             <p className="font-semibold text-brand-900">{t("course")}</p>
-            <ul className="mt-2 space-y-1.5">
+            <ul className="mt-2 space-y-2">
               <li>
-                <Link className="hover:text-brand-800 hover:underline" href="/register">
+                <Link className="transition-colors duration-200 hover:text-brand-800 hover:underline" href="/register">
                   {t("resume")}
                 </Link>
               </li>
               <li>
-                <Link className="hover:text-brand-800 hover:underline" href="/verify">
+                <Link className="transition-colors duration-200 hover:text-brand-800 hover:underline" href="/verify">
                   {t("verify")}
                 </Link>
               </li>
               <li>
-                <Link className="hover:text-brand-800 hover:underline" href="/register">
+                <Link className="transition-colors duration-200 hover:text-brand-800 hover:underline" href="/register">
                   {t("privacy")}
                 </Link>
               </li>
@@ -43,9 +45,13 @@ export async function SiteFooter() {
             <p className="mt-2 leading-relaxed">{t("sampleNotice")}</p>
           </div>
         </div>
-        <p className="mt-8 border-t border-brand-100 pt-5 text-xs text-muted">
-          © {new Date().getFullYear()} {t("copyright")}
-        </p>
+        <div className="mt-8 flex items-center gap-3 border-t border-brand-100 pt-5">
+          <div className="h-px flex-1 bg-gradient-to-r from-brand-200/0 via-brand-200 to-brand-200/0" />
+          <p className="shrink-0 text-xs text-muted">
+            © {new Date().getFullYear()} {t("copyright")}
+          </p>
+          <div className="h-px flex-1 bg-gradient-to-r from-brand-200/0 via-brand-200 to-brand-200/0" />
+        </div>
       </div>
     </footer>
   );

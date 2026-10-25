@@ -81,7 +81,10 @@
     "privacyTitle": "Your privacy",
     "privacyBody": "We collect only what is needed to run the course and issue a certificate. Reflection answers are encrypted at rest and can only be read by designated safeguarding staff.",
     "ctaTitle": "Ready to start?",
-    "ctaBody": "Keep your Scout ID nearby. Registration takes about two minutes."
+    "ctaBody": "Keep your Scout ID nearby. Registration takes about two minutes.",
+    "statParticipants": "Participants",
+    "statCertificates": "Certificates issued",
+    "statModules": "Modules"
   },
   "register": {
     "title": "Register",

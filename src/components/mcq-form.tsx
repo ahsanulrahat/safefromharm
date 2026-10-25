@@ -44,14 +44,14 @@ export function McqForm({
       <input type="hidden" name="moduleSlug" value={moduleSlug} />
       <input type="hidden" name="stepId" value={stepId} />
       <fieldset>
-        <legend className="text-base font-semibold leading-snug text-brand-950">
+        <legend className="text-base font-bold leading-snug text-brand-950 sm:text-lg">
           {prompt}
         </legend>
-        <div className="mt-4 space-y-2.5">
+        <div className="mt-4 space-y-3">
           {options.map((option) => (
             <label
               key={option.id}
-              className="flex cursor-pointer items-start gap-3 rounded-lg border border-brand-100 bg-cream/50 px-3 py-3 text-sm text-brand-950 transition hover:border-brand-300 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50"
+              className="group relative flex cursor-pointer items-start gap-3.5 rounded-xl border border-brand-200/80 bg-white/70 p-3.5 text-sm font-medium text-brand-950 shadow-xs transition-all duration-200 hover:border-brand-400 hover:bg-brand-50/40 hover:shadow-sm has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50/90 has-[:checked]:shadow-xs has-[:checked]:ring-2 has-[:checked]:ring-brand-500/20"
             >
               <input
                 type="radio"
@@ -59,9 +59,11 @@ export function McqForm({
                 value={option.id}
                 required
                 defaultChecked={existingOptionId === option.id}
-                className="mt-0.5 h-4 w-4 border-brand-300 text-brand-700 focus:ring-brand-300"
+                className="mt-0.5 h-4 w-4 shrink-0 border-brand-300 text-brand-700 accent-brand-700 transition focus:ring-brand-400"
               />
-              <span>{option.label}</span>
+              <span className="leading-relaxed transition-colors group-hover:text-brand-900 group-has-[:checked]:font-semibold group-has-[:checked]:text-brand-950">
+                {option.label}
+              </span>
             </label>
           ))}
         </div>
@@ -76,28 +78,32 @@ export function McqForm({
       {state.ok && state.correct !== undefined && (
         <div
           className={
-            "mt-4 flex items-start gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold " +
+            "mt-4 flex items-start gap-2.5 rounded-xl border p-3.5 text-sm font-semibold transition-all " +
             (state.correct
-              ? "bg-brand-50 text-brand-800"
-              : "bg-gold-50 text-gold-900")
+              ? "border-brand-200 bg-brand-50/90 text-brand-900"
+              : "border-gold-300 bg-gold-50/90 text-gold-950")
           }
           role="status"
           aria-live="polite"
         >
-          {state.correct && <CheckIcon className="mt-0.5 h-4 w-4 shrink-0" />}
-          <span>
-            {state.correct ? labels.correct : labels.incorrect}
+          {state.correct && (
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white shadow-xs">
+              <CheckIcon className="h-3 w-3" />
+            </span>
+          )}
+          <div>
+            <span>{state.correct ? labels.correct : labels.incorrect}</span>
             {existingOptionId && (
-              <span className="mt-1 block text-xs font-normal opacity-80">
+              <span className="mt-1 block text-xs font-normal opacity-85">
                 {labels.answeredNote}
               </span>
             )}
-          </span>
+          </div>
         </div>
       )}
 
       {state.ok && state.correct === undefined && (
-        <p className="mt-3 text-sm font-medium text-brand-800" role="status">
+        <p className="mt-3.5 text-sm font-medium text-brand-800" role="status">
           {labels.answeredNote}
         </p>
       )}
@@ -105,7 +111,7 @@ export function McqForm({
       <button
         type="submit"
         disabled={pending}
-        className={buttonClass("primary") + " mt-4"}
+        className={buttonClass("primary") + " mt-5"}
       >
         {pending ? labels.submitting : labels.submit}
       </button>

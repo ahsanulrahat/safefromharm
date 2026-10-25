@@ -34,24 +34,26 @@ export default async function AdminProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-brand-50/40">
-      <header className="border-b border-brand-800 bg-brand-950 text-white">
+    <div className="min-h-screen bg-surface-cream/50">
+      <header className="sticky top-0 z-30 border-b border-brand-800/80 bg-brand-950/95 text-white shadow-md backdrop-blur-md">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex h-16 items-center justify-between gap-3">
-            <Link href="/admin" className="flex items-center gap-2 font-bold">
-              <CompassMark className="h-8 w-8 text-gold-300" />
+            <Link href="/admin" className="group flex items-center gap-2.5 font-bold">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-brand-800 to-brand-700 text-gold-300 shadow-2xs">
+                <CompassMark className="h-6 w-6" />
+              </span>
               <span className="leading-tight">
-                <span className="block text-sm">{tc("brand")}</span>
-                <span className="block text-xs font-normal text-brand-200">
-                  Admin · {admin.role}
+                <span className="block text-sm font-black tracking-tight">{tc("brand")}</span>
+                <span className="block text-[11px] font-medium text-brand-300">
+                  Admin · <span className="rounded bg-brand-800/80 px-1 py-0.5 text-gold-300 font-semibold">{admin.role}</span>
                 </span>
               </span>
             </Link>
             <div className="flex items-center gap-2 text-xs">
-              <span className="hidden text-brand-200 sm:inline">{admin.email}</span>
+              <span className="hidden font-mono text-xs text-brand-300 sm:inline">{admin.email}</span>
               <Link
                 href="/"
-                className="rounded-md border border-brand-700 px-2 py-1 font-semibold hover:bg-brand-900"
+                className="rounded-xl border border-brand-700/80 bg-white/5 px-2.5 py-1.5 font-semibold text-brand-100 transition hover:bg-white/10 hover:text-white"
               >
                 {t("site")}
               </Link>
@@ -59,19 +61,19 @@ export default async function AdminProtectedLayout({
                 <input type="hidden" name="locale" value={locale} />
                 <button
                   type="submit"
-                  className="rounded-md bg-white/10 px-2 py-1 font-semibold hover:bg-white/20"
+                  className="rounded-xl bg-white/10 px-2.5 py-1.5 font-semibold text-white transition hover:bg-white/20 active:scale-95"
                 >
                   {t("logout")}
                 </button>
               </form>
             </div>
           </div>
-          <nav aria-label="Admin" className="-mx-1 flex gap-1 overflow-x-auto pb-2">
+          <nav aria-label="Admin" className="-mx-1 flex gap-1 overflow-x-auto pb-2.5 scrollbar-none">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium text-brand-100 hover:bg-brand-900 hover:text-white"
+                className="whitespace-nowrap rounded-xl px-3 py-1.5 text-xs font-semibold text-brand-200 transition-all hover:bg-white/10 hover:text-white"
               >
                 {link.label}
               </Link>
@@ -81,7 +83,7 @@ export default async function AdminProtectedLayout({
       </header>
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         {children}
-        <div className="mt-10">
+        <div className="mt-12">
           <SafeguardingBox />
         </div>
       </div>

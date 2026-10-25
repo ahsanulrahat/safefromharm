@@ -67,7 +67,10 @@ export default async function ModulePage({
   if (!unlocked) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
-        <h1 className="text-2xl font-bold text-brand-950">{t("lockedTitle")}</h1>
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-brand-200 bg-white shadow-sm">
+          <span className="text-2xl">🔒</span>
+        </div>
+        <h1 className="mt-4 text-2xl font-bold text-brand-950">{t("lockedTitle")}</h1>
         <p className="mt-2 text-muted">{t("lockedBody")}</p>
         <Link href="/course" className={buttonClass("primary") + " mt-6"}>
           {t("goCourse")}
@@ -82,33 +85,41 @@ export default async function ModulePage({
   const isComplete = Boolean(evaluation?.complete);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
+    <div className="relative mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
+      {/* Decorative background glow */}
+      <div className="pointer-events-none absolute -top-10 right-0 -z-10 h-64 w-64 rounded-full bg-brand-500/5 blur-3xl" />
+
       <Link
         href="/course"
-        className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline"
+        className="group inline-flex items-center gap-2 rounded-xl border border-brand-200/80 bg-white/80 px-3.5 py-1.5 text-sm font-semibold text-brand-700 shadow-2xs backdrop-blur-sm transition-all hover:border-brand-300 hover:bg-brand-50 hover:text-brand-900"
       >
-        <span aria-hidden="true">←</span> {t("back")}
+        <span aria-hidden="true" className="transition-transform group-hover:-translate-x-0.5">←</span>
+        {t("back")}
       </Link>
 
-      <p className="mt-4 text-xs font-bold uppercase tracking-wider text-muted">
-        {locale === "bn" ? `${tc("brand")} · মডিউল ${moduleIndex + 1}` : `${tc("brand")} · Module ${moduleIndex + 1}`}
-      </p>
-      <h1 className="mt-1 text-2xl font-black tracking-tight text-brand-950 sm:text-3xl">
-        {title}
-      </h1>
-      <p className="mt-2 text-sm text-muted">{description}</p>
+      <div className="mt-5">
+        <p className="text-xs font-bold uppercase tracking-wider text-muted">
+          {locale === "bn" ? `${tc("brand")} · মডিউল ${moduleIndex + 1}` : `${tc("brand")} · Module ${moduleIndex + 1}`}
+        </p>
+        <h1 className="mt-1 text-2xl font-black tracking-tight text-brand-950 sm:text-3xl">
+          {title}
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{description}</p>
+      </div>
 
-      <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold">
+      <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold">
         <span
           className={
-            "rounded-full px-2.5 py-1 " +
-            (watched ? "bg-brand-100 text-brand-800" : "bg-brand-50 text-muted")
+            "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 transition " +
+            (watched
+              ? "border-brand-200 bg-brand-50 text-brand-800"
+              : "border-brand-100 bg-white/70 text-muted")
           }
         >
           {t("videoProgress")} {watched ? "✓" : ""}
         </span>
         {evaluation && (
-          <span className="rounded-full bg-brand-50 px-2.5 py-1 text-brand-800">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-100 bg-brand-50/70 px-3 py-1 text-brand-800">
             {t("mcqProgress", {
               correct: evaluation.mcqCorrect,
               total: evaluation.mcqTotal,
@@ -117,7 +128,7 @@ export default async function ModulePage({
           </span>
         )}
         {evaluation && evaluation.reflectionsTotal > 0 && (
-          <span className="rounded-full bg-brand-50 px-2.5 py-1 text-brand-800">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-100 bg-brand-50/70 px-3 py-1 text-brand-800">
             {t("reflectionsProgress", {
               done: evaluation.reflectionsDone,
               total: evaluation.reflectionsTotal,
@@ -126,9 +137,9 @@ export default async function ModulePage({
         )}
       </div>
 
-      <section className="mt-7">
-        <h2 className="mb-2 text-lg font-bold text-brand-950">{t("videoTitle")}</h2>
-        <p className="mb-3 text-xs text-muted">{t("videoHint")}</p>
+      <section className="mt-8 rounded-2xl border border-brand-100 bg-white/80 p-5 shadow-xs backdrop-blur-sm sm:p-6">
+        <h2 className="text-lg font-bold text-brand-950">{t("videoTitle")}</h2>
+        <p className="mt-1 mb-4 text-xs font-medium text-muted">{t("videoHint")}</p>
         <ModuleVideo
           videoId={currentModule.videoId}
           moduleSlug={currentModule.slug}
@@ -146,16 +157,23 @@ export default async function ModulePage({
 
       {mcqSteps.length > 0 && (
         <section className="mt-10">
-          <h2 className="text-lg font-bold text-brand-950">{t("mcqTitle")}</h2>
-          <div className="mt-3 space-y-4">
+          <div className="mb-4">
+            <h2 className="text-xl font-black text-brand-950">{t("mcqTitle")}</h2>
+          </div>
+          <div className="space-y-6">
             {mcqSteps.map((step, index) => {
               const options = parseOptions(step.options);
               const progress = state.progressByStep.get(step.id);
               return (
                 <div key={step.id}>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-muted">
-                    {t("questionOf", { current: index + 1, total: mcqSteps.length })}
-                  </p>
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-100 text-[11px] font-bold text-brand-800">
+                      {index + 1}
+                    </span>
+                    <p className="text-xs font-bold uppercase tracking-wide text-muted">
+                      {t("questionOf", { current: index + 1, total: mcqSteps.length })}
+                    </p>
+                  </div>
                   <McqForm
                     moduleSlug={currentModule.slug}
                     stepId={step.id}
@@ -182,8 +200,10 @@ export default async function ModulePage({
 
       {reflectionSteps.length > 0 && (
         <section className="mt-10">
-          <h2 className="text-lg font-bold text-brand-950">{t("reflectionTitle")}</h2>
-          <div className="mt-3 space-y-4">
+          <div className="mb-4">
+            <h2 className="text-xl font-black text-brand-950">{t("reflectionTitle")}</h2>
+          </div>
+          <div className="space-y-6">
             {reflectionSteps.map((step) => {
               const progress = state.progressByStep.get(step.id);
               let defaultAnswer = "";
@@ -218,15 +238,15 @@ export default async function ModulePage({
       )}
 
       {isComplete ? (
-        <section className="mt-10 rounded-2xl border border-brand-300 bg-brand-50 p-6">
-          <div className="flex items-start gap-3">
-            <span className="rounded-full bg-white p-2 text-brand-700">
-              <CheckIcon className="h-5 w-5" />
+        <section className="mt-10 overflow-hidden rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 via-white to-brand-50/60 p-6 shadow-xs sm:p-7">
+          <div className="flex items-start gap-4">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white shadow-xs">
+              <CheckIcon className="h-6 w-6" />
             </span>
             <div>
-              <h2 className="text-lg font-bold text-brand-950">{t("completeTitle")}</h2>
+              <h2 className="text-xl font-bold text-brand-950">{t("completeTitle")}</h2>
               <p className="mt-1 text-sm text-brand-800">{t("completeBody")}</p>
-              <div className="mt-4 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-wrap gap-3">
                 {nextModule ? (
                   <Link
                     href={`/course/${nextModule.slug}`}
@@ -251,9 +271,9 @@ export default async function ModulePage({
           </div>
         </section>
       ) : (
-        <p className="mt-8 rounded-xl border border-brand-100 bg-white px-4 py-3 text-xs text-muted">
+        <div className="mt-8 rounded-xl border border-brand-100 bg-white/90 p-4 text-xs font-medium text-muted shadow-2xs">
           {t("retryNote")}
-        </p>
+        </div>
       )}
     </div>
   );
