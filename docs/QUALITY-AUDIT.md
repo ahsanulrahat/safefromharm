@@ -53,3 +53,7 @@ participants.
 - Vercel marks production secrets as encrypted; CLI environment pulls redact
   them. The production environment was configured from the repository's
   Neon/app settings and exercised through live database and login requests.
+- `AUTH_SECRET` was set from the repository's configured value while restoring
+  the production environment. Vercel does not reveal the prior encrypted value,
+  so old participant/admin cookies may need to be renewed; saved participant
+  progress remains in the database.
