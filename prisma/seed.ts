@@ -527,7 +527,9 @@ async function seedModules() {
 }
 
 async function main() {
-  await seedAdmin();
+  if (process.env.SKIP_ADMIN_SEED !== "true") {
+    await seedAdmin();
+  }
   await seedModules();
   await prisma.setting.upsert({
     where: { key: "mcqPassMark" },

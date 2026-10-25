@@ -52,8 +52,6 @@ model Participant {
   @@index([audience])
   @@index([district])
   @@index([createdAt])
-  @@index([scoutId])
-  @@index([phone])
 }
 
 model Module {
@@ -151,7 +149,6 @@ model Certificate {
 
   @@index([participantId])
   @@index([issuedAt])
-  @@index([id])
 }
 
 model AdminUser {
