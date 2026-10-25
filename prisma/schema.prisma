@@ -19,6 +19,11 @@ enum Audience {
 
 enum AdminRole {
   SUPERADMIN
+  CONTENT_MANAGER
+  SAFEGUARDING_REVIEWER
+  REPORTING_ADMIN
+  // Kept for backward compatibility; authorization maps these to their
+  // least-privilege replacements at runtime.
   SAFEGUARDING
   VIEWER
 }
@@ -152,26 +157,58 @@ model Certificate {
 }
 
 model AdminUser {
-  id           String    @id @default(cuid())
-  email        String    @unique
-  name         String
-  passwordHash String
-  role         AdminRole @default(VIEWER)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id                  String         @id @default(cuid())
+  loginId             String         @unique
+  email               String         @unique
+  name                String
+  passwordHash        String
+  role                AdminRole      @default(VIEWER)
+  isActive            Boolean        @default(true)
+  deletedAt           DateTime?
+  mustChangePassword  Boolean        @default(false)
+  sessionVersion      Int            @default(0)
+  failedLoginAttempts Int            @default(0)
+  lockedUntil         DateTime?
+  lastLoginAt         DateTime?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  sessions AdminSession[]
+}
+
+model AdminSession {
+  id        String    @id
+  adminId   String
+  createdAt DateTime  @default(now())
+  expiresAt DateTime
+  revokedAt DateTime?
+  ipAddress String?   @db.VarChar(64)
+  userAgent String?   @db.VarChar(512)
+
+  admin AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId, revokedAt, expiresAt])
+  @@index([expiresAt])
 }
 
 model AuditLog {
   id         String    @id @default(cuid())
+  actorId    String?
   actorEmail String
   actorRole  AdminRole
   action     String
   targetType String
   targetId   String
+  before     Json?
+  after      Json?
+  ipAddress  String?   @db.VarChar(64)
+  userAgent  String?   @db.VarChar(512)
   createdAt  DateTime  @default(now())
 
   @@index([createdAt])
   @@index([action])
+  @@index([actorId, createdAt])
+  @@index([targetType, targetId, createdAt])
 }
 
 model Setting {

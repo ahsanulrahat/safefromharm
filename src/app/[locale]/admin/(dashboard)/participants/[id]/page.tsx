@@ -42,7 +42,7 @@ export default async function ParticipantDetailPage({
   params: Promise<{ locale: AppLocale; id: string }>;
 }) {
   const { locale, id } = await params;
-  const admin = await requireAdmin(locale);
+const admin = await requireAdmin(locale, "participants:details");
   const participant = await getParticipant(id);
   if (!participant) notFound();
 
@@ -51,7 +51,7 @@ export default async function ParticipantDetailPage({
   const tc = await getTranslations("admin.common");
   const tr = await getTranslations("register");
   const tcert = await getTranslations("admin.certificates");
-  const canSafeguard = admin.role === "SUPERADMIN" || admin.role === "SAFEGUARDING";
+  const canSafeguard = admin.role === "SUPERADMIN" || admin.role === "SAFEGUARDING_REVIEWER";
   const isSuperadmin = admin.role === "SUPERADMIN";
 
   return (

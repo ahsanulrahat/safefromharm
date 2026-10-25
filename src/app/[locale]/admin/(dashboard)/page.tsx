@@ -11,6 +11,8 @@ import {
 import { buttonClass, cardClass } from "@/components/ui";
 import { formatPercent } from "@/lib/format";
 import type { AppLocale } from "@/i18n/routing";
+import { hasAdminPermission } from "@/lib/roles";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -84,7 +86,10 @@ export default async function AdminDashboardPage({
 }) {
   const { locale } = await params;
   const search = await searchParams;
-  await requireAdmin(locale);
+  const admin = await requireAdmin(locale);
+  if (!hasAdminPermission(admin.role, "dashboard:read")) {
+    redirect(`/${locale}${hasAdminPermission(admin.role, "content:read") ? "/admin/content" : hasAdminPermission(admin.role, "admins:read") ? "/admin/admins" : "/admin/account"}`);
+  }
   const t = await getTranslations("admin.dashboard");
   const tc = await getTranslations("admin.common");
   const data = await getDashboardData();

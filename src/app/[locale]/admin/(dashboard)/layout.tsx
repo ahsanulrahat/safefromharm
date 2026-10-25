@@ -6,6 +6,7 @@ import { CompassMark } from "@/components/icons";
 import { SafeguardingBox } from "@/components/safeguarding-box";
 import { LocaleControls } from "@/components/locale-controls";
 import type { AppLocale } from "@/i18n/routing";
+import { hasAdminPermission } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
 
@@ -21,27 +22,29 @@ export default async function AdminProtectedLayout({
   const admin = await requireAdmin(locale);
   const t = await getTranslations("admin.nav");
   const tc = await getTranslations("common");
-  const canSeeSensitive = admin.role === "SAFEGUARDING" || admin.role === "SUPERADMIN";
-
-  const links: Array<{ href: string; label: string }> = [
-    { href: "/admin", label: t("dashboard") },
-    { href: "/admin/participants", label: t("participants") },
-    { href: "/admin/certificates", label: t("certificates") },
-    { href: "/admin/content", label: t("content") },
-  ];
-  if (canSeeSensitive) {
-    links.push({ href: "/admin/responses", label: t("responses") });
-  }
-  if (admin.role === "SUPERADMIN") {
-    links.push({ href: "/admin/audit", label: t("audit") });
-  }
+  const links: Array<{ href: string; label: string }> = [];
+  if (hasAdminPermission(admin.role, "dashboard:read")) links.push({ href: "/admin", label: t("dashboard") });
+  if (hasAdminPermission(admin.role, "participants:read")) links.push({ href: "/admin/participants", label: t("participants") });
+  if (hasAdminPermission(admin.role, "certificates:read")) links.push({ href: "/admin/certificates", label: t("certificates") });
+  if (hasAdminPermission(admin.role, "content:read")) links.push({ href: "/admin/content", label: t("content") });
+  if (hasAdminPermission(admin.role, "responses:read")) links.push({ href: "/admin/responses", label: t("responses") });
+  if (hasAdminPermission(admin.role, "admins:read")) links.push({ href: "/admin/admins", label: t("admins") });
+  if (hasAdminPermission(admin.role, "audit:read")) links.push({ href: "/admin/audit", label: t("audit") });
+  links.push({ href: "/admin/account", label: t("account") });
+  const homeHref = hasAdminPermission(admin.role, "dashboard:read")
+    ? "/admin"
+    : hasAdminPermission(admin.role, "content:read")
+      ? "/admin/content"
+      : hasAdminPermission(admin.role, "admins:read")
+        ? "/admin/admins"
+        : "/admin/account";
 
   return (
     <div className="min-h-screen bg-surface-cream/50">
       <header className="sticky top-0 z-30 border-b border-brand-800/80 bg-brand-950/95 text-white shadow-md backdrop-blur-md">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex h-16 items-center justify-between gap-3">
-            <Link href="/admin" className="group flex items-center gap-2.5 font-bold">
+            <Link href={homeHref} className="group flex items-center gap-2.5 font-bold">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-brand-800 to-brand-700 text-gold-300 shadow-2xs">
                 <CompassMark className="h-6 w-6" />
               </span>

@@ -31,7 +31,7 @@ export default async function ResponsesPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
-  const admin = await requireAdmin(locale, ["SUPERADMIN", "SAFEGUARDING"]);
+const admin = await requireAdmin(locale, "responses:read");
   const search = await searchParams;
   const moduleSlug = first(search.module).slice(0, 80);
   const participantId = first(search.participant).slice(0, 40);

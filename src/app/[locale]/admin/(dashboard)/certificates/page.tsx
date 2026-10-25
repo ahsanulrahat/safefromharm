@@ -30,7 +30,7 @@ export default async function CertificatesPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
-  const admin = await requireAdmin(locale);
+  const admin = await requireAdmin(locale, "certificates:read");
   const filters = parseCertificateFilters(await searchParams);
 
   const [t, tc, result] = await Promise.all([

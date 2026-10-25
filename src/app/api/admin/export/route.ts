@@ -2,6 +2,8 @@ import { getAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { audit } from "@/lib/audit";
 import { parseParticipantFilters, participantWhere } from "@/lib/admin-queries";
+import { hasAdminPermission } from "@/lib/roles";
+import { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -23,11 +25,81 @@ export async function GET(request: Request) {
   if (!admin) {
     return new Response("Unauthorized", { status: 401 });
   }
+  if (!hasAdminPermission(admin.role, "participants:export")) {
+    return new Response("Forbidden", { status: 403 });
+  }
+  if (admin.mustChangePassword) {
+    return new Response("Password change required", { status: 403 });
+  }
 
   const url = new URL(request.url);
   const filters = parseParticipantFilters(
     Object.fromEntries(url.searchParams.entries())
   );
+
+  if (admin.role === "REPORTING_ADMIN") {
+    const reports = await prisma.$queryRaw<Array<{
+      month: Date;
+      audience: string;
+      registrations: number;
+      completers: number;
+      activeCertificates: number;
+      revokedCertificates: number;
+    }>>(Prisma.sql`
+      WITH published_modules AS (
+        SELECT COUNT(*)::int AS total FROM "Module" WHERE "published" = TRUE
+      ), participant_progress AS (
+        SELECT "participantId", COUNT(*) FILTER (WHERE "completedAt" IS NOT NULL)::int AS completed
+        FROM "ModuleProgress" GROUP BY "participantId"
+      ), certificate_counts AS (
+        SELECT "participantId",
+          COUNT(*) FILTER (WHERE "activeKey" IS NOT NULL)::int AS active,
+          COUNT(*) FILTER (WHERE "revokedAt" IS NOT NULL)::int AS revoked
+        FROM "Certificate" GROUP BY "participantId"
+      )
+      SELECT DATE_TRUNC('month', p."createdAt") AS month,
+        p."audience"::text AS audience,
+        COUNT(*)::int AS registrations,
+        COUNT(*) FILTER (WHERE COALESCE(pp.completed, 0) >= pm.total)::int AS completers,
+        SUM(COALESCE(cc.active, 0))::int AS "activeCertificates",
+        SUM(COALESCE(cc.revoked, 0))::int AS "revokedCertificates"
+      FROM "Participant" p
+      LEFT JOIN participant_progress pp ON pp."participantId" = p."id"
+      LEFT JOIN certificate_counts cc ON cc."participantId" = p."id"
+      CROSS JOIN published_modules pm
+      GROUP BY DATE_TRUNC('month', p."createdAt"), p."audience"
+      ORDER BY month DESC, audience ASC
+    `);
+    const lines = [
+      ["Month", "Member type", "Registrations", "Course completers", "Active certificates", "Revoked certificates"].map(cell).join(","),
+      ...reports.map((report) => {
+        return [
+          report.month.toISOString().slice(0, 7),
+          report.audience,
+          report.registrations,
+          report.completers,
+          report.activeCertificates,
+          report.revokedCertificates,
+        ].map(cell).join(",");
+      }),
+    ];
+    await audit({
+      actorId: admin.id,
+      actorEmail: admin.email,
+      actorRole: admin.role,
+      action: "PARTICIPANTS_EXPORT_AGGREGATE",
+      targetType: "Report",
+      targetId: `monthly-aggregate.csv (${reports.length} rows)`,
+    });
+    const stamp = new Date().toISOString().slice(0, 10);
+    return new Response(`\uFEFF${lines.join("\r\n")}\r\n`, {
+      headers: {
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": `attachment; filename="scout-moot-2026-monthly-report-${stamp}.csv"`,
+        "Cache-Control": "no-store",
+      },
+    });
+  }
 
   const participants = await prisma.participant.findMany({
     where: participantWhere(filters),
@@ -115,6 +187,7 @@ export async function GET(request: Request) {
   }
 
   await audit({
+    actorId: admin.id,
     actorEmail: admin.email,
     actorRole: admin.role,
     action: "PARTICIPANTS_EXPORT",

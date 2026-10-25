@@ -34,7 +34,7 @@ export default async function ParticipantsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
-  await requireAdmin(locale);
+await requireAdmin(locale, "participants:details");
   const filters = parseParticipantFilters(await searchParams);
 
   const [t, tc, tr, districts, result] = await Promise.all([

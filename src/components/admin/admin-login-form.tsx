@@ -33,13 +33,13 @@ export function AdminLoginForm({
         </div>
       )}
       <div>
-        <label className={labelClass} htmlFor="admin-email">
+        <label className={labelClass} htmlFor="admin-login-id">
           {t("email")}
         </label>
         <input
-          id="admin-email"
-          name="email"
-          type="email"
+          id="admin-login-id"
+          name="loginId"
+          type="text"
           autoComplete="username"
           required
           className={inputClass}

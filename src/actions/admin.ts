@@ -26,7 +26,7 @@ export async function saveModuleAction(
   _prev: ContentState,
   formData: FormData
 ): Promise<ContentState> {
-  const admin = await requireAdminAction(["SUPERADMIN", "SAFEGUARDING"]);
+  const admin = await requireAdminAction("content:write");
   const raw = text(formData, "json");
   const originalSlug = text(formData, "originalSlug").trim();
 
@@ -175,7 +175,7 @@ export async function saveModuleAction(
 }
 
 export async function moveModuleAction(formData: FormData) {
-  const admin = await requireAdminAction(["SUPERADMIN", "SAFEGUARDING"]);
+  const admin = await requireAdminAction("content:write");
   const slug = text(formData, "slug");
   const direction = text(formData, "direction") === "up" ? "up" : "down";
   const locale = text(formData, "locale") || "bn";
@@ -218,7 +218,7 @@ export async function moveModuleAction(formData: FormData) {
 }
 
 export async function togglePublishAction(formData: FormData) {
-  const admin = await requireAdminAction(["SUPERADMIN", "SAFEGUARDING"]);
+  const admin = await requireAdminAction("content:write");
   const slug = text(formData, "slug");
   const locale = text(formData, "locale") || "bn";
 
@@ -243,7 +243,7 @@ export async function togglePublishAction(formData: FormData) {
 }
 
 export async function saveSettingsAction(formData: FormData) {
-  const admin = await requireAdminAction(["SUPERADMIN"]);
+  const admin = await requireAdminAction("settings:write");
   const locale = text(formData, "locale") || "bn";
   const value = Number.parseInt(text(formData, "passMark"), 10);
 
@@ -272,7 +272,7 @@ export async function saveSettingsAction(formData: FormData) {
 /* -------------------------------------------------------------------------- */
 
 export async function revokeCertificateAction(formData: FormData) {
-  const admin = await requireAdminAction(["SUPERADMIN"]);
+  const admin = await requireAdminAction("certificates:write");
   const id = text(formData, "id").toUpperCase();
   const locale = text(formData, "locale") || "bn";
   const reason = text(formData, "reason").trim() || "Revoked by organizer";
@@ -301,7 +301,7 @@ export async function revokeCertificateAction(formData: FormData) {
 }
 
 export async function reissueCertificateAction(formData: FormData) {
-  const admin = await requireAdminAction(["SUPERADMIN"]);
+  const admin = await requireAdminAction("certificates:write");
   const id = text(formData, "id").toUpperCase();
   const locale = text(formData, "locale") || "bn";
 

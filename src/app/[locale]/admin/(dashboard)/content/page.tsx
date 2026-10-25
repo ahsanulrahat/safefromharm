@@ -97,7 +97,7 @@ export default async function AdminContentPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
-  await requireAdmin(locale, ["SUPERADMIN", "SAFEGUARDING"]);
+await requireAdmin(locale, "content:read");
   const search = await searchParams;
   const requestedSlug =
     typeof search.module === "string" ? search.module : "";

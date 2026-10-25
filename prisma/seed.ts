@@ -459,21 +459,22 @@ async function seedAdmin() {
     console.warn("ADMIN_PASSWORD is shorter than 8 characters.");
   }
 
+  const existing = await prisma.adminUser.findUnique({ where: { email }, select: { id: true } });
+  if (existing) {
+    console.info("Configured SUPERADMIN already exists; seed left its account and credentials untouched.");
+    return;
+  }
   const passwordHash = await bcrypt.hash(password, 12);
-  await prisma.adminUser.upsert({
-    where: { email },
-    create: {
+  await prisma.adminUser.create({
+    data: {
+      loginId: email,
       email,
       name: "Superadmin",
       passwordHash,
       role: "SUPERADMIN",
     },
-    update: {
-      passwordHash,
-      role: "SUPERADMIN",
-    },
   });
-  console.log(`Seeded superadmin ${email}.`);
+  console.info("Created the configured SUPERADMIN account.");
 }
 
 async function seedModules() {
