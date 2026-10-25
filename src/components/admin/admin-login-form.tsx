@@ -8,13 +8,22 @@ import type { AppLocale } from "@/i18n/routing";
 
 const initialState: LoginState = {};
 
-export function AdminLoginForm({ locale }: { locale: AppLocale }) {
+export function AdminLoginForm({
+  locale,
+  callbackUrl,
+}: {
+  locale: AppLocale;
+  callbackUrl?: string;
+}) {
   const t = useTranslations("admin.login");
   const [state, action, pending] = useActionState(loginAction, initialState);
 
   return (
     <form action={action} className="space-y-4">
       <input type="hidden" name="locale" value={locale} />
+      {callbackUrl ? (
+        <input type="hidden" name="callbackUrl" value={callbackUrl} />
+      ) : null}
       {state.error && (
         <div
           role="alert"

@@ -8,8 +8,10 @@ const { auth } = NextAuth(authConfig);
 
 export default auth((request) => {
   const { pathname } = request.nextUrl;
-  // Groups: 1=locale, 2=section (admin|control-center), 3=rest (e.g. /login)
-  const adminMatch = pathname.match(/^\/(bn|en)\/(admin|control-center)(\/.*)?$/);
+  // Groups: 1=locale, 2=section, 3=rest (e.g. /login)
+  const adminMatch = pathname.match(
+    /^\/(bn|en)\/(admin|organizer|control-center)(\/.*)?$/
+  );
   const isAdminLogin = adminMatch?.[2] === "admin" && adminMatch[3] === "/login";
 
   if (adminMatch && !isAdminLogin && !request.auth) {

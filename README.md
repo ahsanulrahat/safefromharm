@@ -104,7 +104,8 @@ npm run db:studio    # Prisma Studio
 
 ## Content management
 
-1. Sign in at `/bn/admin/login` with `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
+1. Open the organizer dashboard at `/bn/organizer` (or `/bn/admin`), then sign
+   in with `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
 2. Open **Content** and select a module (or create a new one).
 3. Edit the JSON and save. The schema is validated server-side before writing.
 4. Replace every `SAMPLE` module with approved Bangladesh Scouts Safe from Harm

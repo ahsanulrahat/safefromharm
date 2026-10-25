@@ -3,6 +3,7 @@
 import { AuthError } from "next-auth";
 import { signIn, signOut } from "@/auth";
 import { getTranslations } from "next-intl/server";
+import { safeAdminCallback } from "@/lib/admin-callback";
 
 export type LoginState = { error?: string };
 
@@ -13,6 +14,7 @@ export async function loginAction(
   const locale = String(formData.get("locale") ?? "bn") === "en" ? "en" : "bn";
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const redirectTo = safeAdminCallback(locale, formData.get("callbackUrl"));
   const t = await getTranslations({ locale, namespace: "admin.login" });
 
   if (!email || !password) return { error: t("error") };
@@ -21,7 +23,7 @@ export async function loginAction(
     await signIn("credentials", {
       email,
       password,
-      redirectTo: `/${locale}/admin`,
+      redirectTo,
     });
     return {};
   } catch (error) {

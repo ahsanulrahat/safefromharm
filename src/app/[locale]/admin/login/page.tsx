@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { getAdmin } from "@/lib/admin";
+import { safeAdminCallback } from "@/lib/admin-callback";
 import { AdminLoginForm } from "@/components/admin/admin-login-form";
 import { CompassMark } from "@/components/icons";
 import type { AppLocale } from "@/i18n/routing";
@@ -15,12 +16,20 @@ export async function generateMetadata() {
 
 export default async function AdminLoginPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: AppLocale }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
+  const search = await searchParams;
+  const rawCallback = Array.isArray(search.callbackUrl)
+    ? search.callbackUrl[0]
+    : search.callbackUrl;
+  const callbackUrl = safeAdminCallback(locale, rawCallback);
+
   const admin = await getAdmin();
-  if (admin) redirect(`/${locale}/admin`);
+  if (admin) redirect(callbackUrl);
 
   const t = await getTranslations("admin.login");
   const tc = await getTranslations("common");
@@ -36,7 +45,7 @@ export default async function AdminLoginPage({
       </div>
 
       <div className="mt-6 rounded-2xl border border-brand-100 bg-white p-6 shadow-sm">
-        <AdminLoginForm locale={locale} />
+        <AdminLoginForm locale={locale} callbackUrl={callbackUrl} />
       </div>
 
       <p className="mt-5 text-center text-sm">

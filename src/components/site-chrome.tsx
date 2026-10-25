@@ -19,6 +19,8 @@ export function SiteChrome({
   const isAdmin =
     pathname === "/admin" ||
     pathname.startsWith("/admin/") ||
+    pathname === "/organizer" ||
+    pathname.startsWith("/organizer/") ||
     pathname === "/control-center" ||
     pathname.startsWith("/control-center/");
 
