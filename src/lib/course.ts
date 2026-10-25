@@ -56,7 +56,7 @@ export async function getCourseState(participantId: string): Promise<CourseState
     ]);
 
   const audienceModules = participant?.audience
-    ? modules.filter((m) => (m as any).audience === participant.audience)
+    ? modules.filter((m) => m.audience === participant.audience)
     : modules;
 
   const watchedModuleIds = new Set(

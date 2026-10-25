@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "SiyamRupali", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", var(--font-inter), var(--font-noto-bengali), Inter, "Segoe UI", Roboto, sans-serif;
 
@@ -96,6 +98,27 @@
 @layer base {
   :root {
     color-scheme: light;
+    --bg-page: #fafbfa;
+    --bg-card: #ffffff;
+    --bg-card-subtle: #f4f8f6;
+    --text-primary: #14201b;
+    --text-secondary: #5b6b63;
+    --border-card: #e5ece8;
+  }
+
+  html.dark {
+    color-scheme: dark;
+    --color-cream: #0c1410;
+    --color-surface: #14221b;
+    --color-ink: #f0f6f3;
+    --color-muted: #94aba0;
+    --color-border: #22372c;
+    --bg-page: #0a120e;
+    --bg-card: #122019;
+    --bg-card-subtle: #172820;
+    --text-primary: #f0f6f3;
+    --text-secondary: #94aba0;
+    --border-card: #20362b;
   }
 
   @font-face {
@@ -120,6 +143,12 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  html.dark body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
   }
 
   :focus-visible {
@@ -132,7 +161,6 @@
     color: var(--color-brand-950);
   }
 
-  /* Avoid red text on green or vice versa */
   .text-red-700,
   .text-red-800 {
     color: var(--color-accent-600);
@@ -148,6 +176,27 @@
   textarea,
   button {
     font: inherit;
+    touch-action: manipulation;
+  }
+
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 640px) {
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      overflow-x: hidden;
+    }
+    button,
+    [role="button"],
+    a {
+      min-height: 44px;
+    }
   }
 }
 
@@ -170,9 +219,14 @@
 
   /* Glass morphism utility */
   .glass {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+  }
+
+  html.dark .glass {
+    background: rgba(18, 32, 25, 0.82);
+    border-color: rgba(34, 55, 44, 0.8);
   }
 
   .glass-dark {
@@ -184,6 +238,13 @@
   /* Gradient text utility */
   .text-gradient {
     background: linear-gradient(135deg, var(--color-brand-700), var(--color-brand-500));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  html.dark .text-gradient {
+    background: linear-gradient(135deg, var(--color-brand-300), var(--color-brand-400));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -204,6 +265,13 @@
       radial-gradient(circle at 50% 80%, rgba(219, 169, 52, 0.06) 0%, transparent 50%);
   }
 
+  html.dark .scout-pattern {
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(86, 171, 126, 0.12) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(224, 97, 120, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 50% 80%, rgba(231, 194, 95, 0.08) 0%, transparent 50%);
+  }
+
   /* Hover card lift effect */
   .hover-lift {
     transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -212,6 +280,10 @@
   .hover-lift:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 30px rgba(0, 61, 44, 0.1);
+  }
+
+  html.dark .hover-lift:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
   }
 
   /* Stagger animation delays */

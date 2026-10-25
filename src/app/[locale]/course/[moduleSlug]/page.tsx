@@ -67,11 +67,11 @@ export default async function ModulePage({
   if (!unlocked) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-brand-200 bg-white shadow-sm">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-brand-200 bg-white shadow-sm dark:border-brand-800 dark:bg-brand-950/60">
           <span className="text-2xl">🔒</span>
         </div>
-        <h1 className="mt-4 text-2xl font-bold text-brand-950">{t("lockedTitle")}</h1>
-        <p className="mt-2 text-muted">{t("lockedBody")}</p>
+        <h1 className="mt-4 text-2xl font-bold text-brand-950 dark:text-brand-50">{t("lockedTitle")}</h1>
+        <p className="mt-2 text-muted dark:text-brand-300">{t("lockedBody")}</p>
         <Link href="/course" className={buttonClass("primary") + " mt-6"}>
           {t("goCourse")}
         </Link>
@@ -87,24 +87,24 @@ export default async function ModulePage({
   return (
     <div className="relative mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
       {/* Decorative background glow */}
-      <div className="pointer-events-none absolute -top-10 right-0 -z-10 h-64 w-64 rounded-full bg-brand-500/5 blur-3xl" />
+      <div className="pointer-events-none absolute -top-10 right-0 -z-10 h-64 w-64 rounded-full bg-brand-500/5 blur-3xl dark:bg-brand-500/5" />
 
       <Link
         href="/course"
-        className="group inline-flex items-center gap-2 rounded-xl border border-brand-200/80 bg-white/80 px-3.5 py-1.5 text-sm font-semibold text-brand-700 shadow-2xs backdrop-blur-sm transition-all hover:border-brand-300 hover:bg-brand-50 hover:text-brand-900"
+        className="group inline-flex items-center gap-2 rounded-xl border border-brand-200/80 bg-white/80 px-3.5 py-1.5 text-sm font-semibold text-brand-700 shadow-2xs backdrop-blur-sm transition-all hover:border-brand-300 hover:bg-brand-50 hover:text-brand-900 dark:border-brand-800 dark:bg-brand-900/50 dark:text-brand-300 dark:hover:bg-brand-900/80 dark:hover:text-white"
       >
         <span aria-hidden="true" className="transition-transform group-hover:-translate-x-0.5">←</span>
         {t("back")}
       </Link>
 
       <div className="mt-5">
-        <p className="text-xs font-bold uppercase tracking-wider text-muted">
+        <p className="text-xs font-bold uppercase tracking-wider text-muted dark:text-brand-400">
           {locale === "bn" ? `${tc("brand")} · মডিউল ${moduleIndex + 1}` : `${tc("brand")} · Module ${moduleIndex + 1}`}
         </p>
-        <h1 className="mt-1 text-2xl font-black tracking-tight text-brand-950 sm:text-3xl">
+        <h1 className="mt-1 text-2xl font-black tracking-tight text-brand-950 dark:text-brand-50 sm:text-3xl">
           {title}
         </h1>
-        <p className="mt-2 text-sm leading-relaxed text-muted">{description}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted dark:text-brand-300">{description}</p>
       </div>
 
       <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold">
@@ -112,14 +112,14 @@ export default async function ModulePage({
           className={
             "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 transition " +
             (watched
-              ? "border-brand-200 bg-brand-50 text-brand-800"
-              : "border-brand-100 bg-white/70 text-muted")
+              ? "border-brand-200 bg-brand-50 text-brand-800 dark:border-brand-800 dark:bg-brand-900/60 dark:text-brand-200"
+              : "border-brand-100 bg-white/70 text-muted dark:border-brand-900 dark:bg-brand-950/40 dark:text-brand-400")
           }
         >
           {t("videoProgress")} {watched ? "✓" : ""}
         </span>
         {evaluation && (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-100 bg-brand-50/70 px-3 py-1 text-brand-800">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-100 bg-brand-50/70 px-3 py-1 text-brand-800 dark:border-brand-800 dark:bg-brand-900/60 dark:text-brand-200">
             {t("mcqProgress", {
               correct: evaluation.mcqCorrect,
               total: evaluation.mcqTotal,
@@ -128,7 +128,7 @@ export default async function ModulePage({
           </span>
         )}
         {evaluation && evaluation.reflectionsTotal > 0 && (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-100 bg-brand-50/70 px-3 py-1 text-brand-800">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-100 bg-brand-50/70 px-3 py-1 text-brand-800 dark:border-brand-800 dark:bg-brand-900/60 dark:text-brand-200">
             {t("reflectionsProgress", {
               done: evaluation.reflectionsDone,
               total: evaluation.reflectionsTotal,
@@ -137,9 +137,9 @@ export default async function ModulePage({
         )}
       </div>
 
-      <section className="mt-8 rounded-2xl border border-brand-100 bg-white/80 p-5 shadow-xs backdrop-blur-sm sm:p-6">
-        <h2 className="text-lg font-bold text-brand-950">{t("videoTitle")}</h2>
-        <p className="mt-1 mb-4 text-xs font-medium text-muted">{t("videoHint")}</p>
+      <section className="mt-8 rounded-2xl border border-brand-100 bg-white/80 p-5 shadow-xs backdrop-blur-sm sm:p-6 dark:border-brand-900/80 dark:bg-brand-950/60">
+        <h2 className="text-lg font-bold text-brand-950 dark:text-brand-50">{t("videoTitle")}</h2>
+        <p className="mt-1 mb-4 text-xs font-medium text-muted dark:text-brand-300">{t("videoHint")}</p>
         <ModuleVideo
           videoId={currentModule.videoId}
           moduleSlug={currentModule.slug}
@@ -158,7 +158,7 @@ export default async function ModulePage({
       {mcqSteps.length > 0 && (
         <section className="mt-10">
           <div className="mb-4">
-            <h2 className="text-xl font-black text-brand-950">{t("mcqTitle")}</h2>
+            <h2 className="text-xl font-black text-brand-950 dark:text-brand-50">{t("mcqTitle")}</h2>
           </div>
           <div className="space-y-6">
             {mcqSteps.map((step, index) => {
@@ -167,10 +167,10 @@ export default async function ModulePage({
               return (
                 <div key={step.id}>
                   <div className="mb-2 flex items-center gap-2">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-100 text-[11px] font-bold text-brand-800">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-100 text-[11px] font-bold text-brand-800 dark:bg-brand-800 dark:text-brand-100">
                       {index + 1}
                     </span>
-                    <p className="text-xs font-bold uppercase tracking-wide text-muted">
+                    <p className="text-xs font-bold uppercase tracking-wide text-muted dark:text-brand-400">
                       {t("questionOf", { current: index + 1, total: mcqSteps.length })}
                     </p>
                   </div>
@@ -201,7 +201,7 @@ export default async function ModulePage({
       {reflectionSteps.length > 0 && (
         <section className="mt-10">
           <div className="mb-4">
-            <h2 className="text-xl font-black text-brand-950">{t("reflectionTitle")}</h2>
+            <h2 className="text-xl font-black text-brand-950 dark:text-brand-50">{t("reflectionTitle")}</h2>
           </div>
           <div className="space-y-6">
             {reflectionSteps.map((step) => {
@@ -238,14 +238,14 @@ export default async function ModulePage({
       )}
 
       {isComplete ? (
-        <section className="mt-10 overflow-hidden rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 via-white to-brand-50/60 p-6 shadow-xs sm:p-7">
+        <section className="mt-10 overflow-hidden rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 via-white to-brand-50/60 p-6 shadow-xs sm:p-7 dark:border-brand-800 dark:from-brand-950 dark:via-brand-900/60 dark:to-brand-950">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white shadow-xs">
               <CheckIcon className="h-6 w-6" />
             </span>
             <div>
-              <h2 className="text-xl font-bold text-brand-950">{t("completeTitle")}</h2>
-              <p className="mt-1 text-sm text-brand-800">{t("completeBody")}</p>
+              <h2 className="text-xl font-bold text-brand-950 dark:text-brand-50">{t("completeTitle")}</h2>
+              <p className="mt-1 text-sm text-brand-800 dark:text-brand-300">{t("completeBody")}</p>
               <div className="mt-5 flex flex-wrap gap-3">
                 {nextModule ? (
                   <Link
@@ -271,7 +271,7 @@ export default async function ModulePage({
           </div>
         </section>
       ) : (
-        <div className="mt-8 rounded-xl border border-brand-100 bg-white/90 p-4 text-xs font-medium text-muted shadow-2xs">
+        <div className="mt-8 rounded-xl border border-brand-100 bg-white/90 p-4 text-xs font-medium text-muted shadow-2xs dark:border-brand-900 dark:bg-brand-950/40 dark:text-brand-300">
           {t("retryNote")}
         </div>
       )}

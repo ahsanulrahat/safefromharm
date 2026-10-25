@@ -108,7 +108,7 @@ export default async function CertificatesPage({
       )}
 
       <div className="mt-4 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto -mx-4 sm:mx-0">
           <table className="min-w-full divide-y divide-brand-100 text-sm">
             <thead className="bg-brand-50 text-left text-xs font-semibold uppercase tracking-wide text-brand-900">
               <tr>

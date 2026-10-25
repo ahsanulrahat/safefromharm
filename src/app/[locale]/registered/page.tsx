@@ -35,23 +35,23 @@ export default async function RegisteredPage({
   return (
     <div className="relative mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-14">
       {/* Decorative ambient background accents */}
-      <div className="pointer-events-none absolute -top-10 right-0 -z-10 h-64 w-64 rounded-full bg-brand-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute -top-10 right-0 -z-10 h-64 w-64 rounded-full bg-brand-500/10 blur-3xl dark:bg-brand-500/5" />
 
       <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-500 text-white shadow-md shadow-brand-700/20">
         <CheckIcon className="h-8 w-8" />
       </div>
-      <h1 className="mt-5 text-3xl font-black tracking-tight text-brand-950 sm:text-4xl">
+      <h1 className="mt-5 text-3xl font-black tracking-tight text-brand-950 sm:text-4xl dark:text-brand-50">
         {t("title")}
       </h1>
-      <p className="mt-2 text-base text-muted">{t("subtitle")}</p>
+      <p className="mt-2 text-base text-muted dark:text-brand-300">{t("subtitle")}</p>
 
-      <div className="mt-7 rounded-3xl border border-brand-200/90 bg-white p-6 shadow-sm sm:p-7">
-        <h2 className="text-lg font-bold text-brand-950">{t("savedTitle")}</h2>
-        <p className="mt-1 text-sm leading-relaxed text-muted">{t("savedBody")}</p>
+      <div className="mt-7 rounded-3xl border border-brand-200/90 bg-white p-6 shadow-sm sm:p-7 dark:border-brand-900/80 dark:bg-brand-950/60">
+        <h2 className="text-lg font-bold text-brand-950 dark:text-brand-100">{t("savedTitle")}</h2>
+        <p className="mt-1 text-sm leading-relaxed text-muted dark:text-brand-300">{t("savedBody")}</p>
 
         <div className="mt-6 space-y-5">
-          <div className="rounded-xl border border-brand-100/90 bg-brand-50/40 p-4">
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-900">
+          <div className="rounded-xl border border-brand-100/90 bg-brand-50/40 p-4 dark:border-brand-800/60 dark:bg-brand-900/40">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-900 dark:text-brand-200">
               {t("resumeCodeLabel")}
             </p>
             <CopyField
@@ -61,8 +61,8 @@ export default async function RegisteredPage({
               mono
             />
           </div>
-          <div className="rounded-xl border border-brand-100/90 bg-brand-50/40 p-4">
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-900">
+          <div className="rounded-xl border border-brand-100/90 bg-brand-50/40 p-4 dark:border-brand-800/60 dark:bg-brand-900/40">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-900 dark:text-brand-200">
               {t("resumeLinkLabel")}
             </p>
             <CopyField
@@ -73,7 +73,7 @@ export default async function RegisteredPage({
           </div>
         </div>
 
-        <p className="mt-5 rounded-xl border border-gold-200 bg-gold-50/80 p-3.5 text-xs font-medium text-gold-950">
+        <p className="mt-5 rounded-xl border border-gold-200 bg-gold-50/80 p-3.5 text-xs font-medium text-gold-950 dark:border-gold-900/60 dark:bg-gold-950/40 dark:text-gold-200">
           {t("emailNote")}
         </p>
       </div>
@@ -89,7 +89,7 @@ export default async function RegisteredPage({
         )}
       </div>
 
-      <p className="mt-8 text-xs font-medium text-muted">
+      <p className="mt-8 text-xs font-medium text-muted dark:text-brand-400">
         {tc("safeguardingTitle")} — {tc("safeguardingContact")}
       </p>
     </div>

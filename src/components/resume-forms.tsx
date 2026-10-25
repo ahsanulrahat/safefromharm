@@ -17,7 +17,7 @@ function ErrorBox({ message }: { message?: string }) {
   return (
     <div
       role="alert"
-      className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-800"
+      className="rounded-xl border border-red-200 bg-red-50/90 px-3.5 py-2.5 text-sm font-semibold text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
     >
       {message}
     </div>
@@ -39,13 +39,13 @@ export function ResumeForms({ locale }: { locale: AppLocale }) {
     <div className="grid gap-5 md:grid-cols-2">
       <form
         action={codeAction}
-        className="space-y-4 rounded-2xl border border-brand-100 bg-white p-5 shadow-sm"
+        className="space-y-4 rounded-2xl border border-brand-100 bg-white p-5 shadow-sm dark:border-brand-900/80 dark:bg-brand-950/50 sm:p-6"
         noValidate
       >
         <input type="hidden" name="locale" value={locale} />
         <div>
-          <h2 className="text-lg font-bold text-brand-950">{t("codeTitle")}</h2>
-          <p className="mt-1 text-sm text-muted">{t("codeHint")}</p>
+          <h2 className="text-lg font-bold text-brand-950 dark:text-brand-50">{t("codeTitle")}</h2>
+          <p className="mt-1 text-sm text-muted dark:text-brand-300">{t("codeHint")}</p>
         </div>
         <ErrorBox message={codeState.error} />
         <div>
@@ -74,13 +74,13 @@ export function ResumeForms({ locale }: { locale: AppLocale }) {
 
       <form
         action={idAction}
-        className="space-y-4 rounded-2xl border border-brand-100 bg-white p-5 shadow-sm"
+        className="space-y-4 rounded-2xl border border-brand-100 bg-white p-5 shadow-sm dark:border-brand-900/80 dark:bg-brand-950/50 sm:p-6"
         noValidate
       >
         <input type="hidden" name="locale" value={locale} />
         <div>
-          <h2 className="text-lg font-bold text-brand-950">{t("idTitle")}</h2>
-          <p className="mt-1 text-sm text-muted">{t("idHint")}</p>
+          <h2 className="text-lg font-bold text-brand-950 dark:text-brand-50">{t("idTitle")}</h2>
+          <p className="mt-1 text-sm text-muted dark:text-brand-300">{t("idHint")}</p>
         </div>
         <ErrorBox message={idState.error} />
         <div>

@@ -153,7 +153,7 @@ export default async function ParticipantsPage({
       </form>
 
       <div className="mt-5 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto -mx-4 sm:mx-0">
           <table className="min-w-full divide-y divide-brand-100 text-sm">
             <thead className="bg-brand-50 text-left text-xs font-semibold uppercase tracking-wide text-brand-900">
               <tr>
@@ -203,7 +203,7 @@ export default async function ParticipantsPage({
                     <div className="text-xs text-muted">{participant.unit}</div>
                   </td>
                   <td className="px-4 py-3">
-                    {(() => { const a = (participant as any).audience as Audience | undefined; return a ? tr(`memberTypes.${audienceKey[a]}`) : "-" })()}
+                    {(() => { const a = participant.audience; return a ? tr(`memberTypes.${audienceKey[a]}`) : "-" })()}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
                     <span className="font-semibold text-brand-900">

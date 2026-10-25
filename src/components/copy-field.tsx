@@ -30,7 +30,7 @@ export function CopyField({
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
       <code
         className={
-          "min-w-0 flex-1 break-all rounded-xl border border-brand-200/90 bg-white px-3.5 py-2.5 text-sm font-semibold text-brand-950 shadow-2xs " +
+          "min-w-0 flex-1 break-all rounded-xl border border-brand-200/90 bg-white px-3.5 py-2.5 text-sm font-semibold text-brand-950 shadow-2xs dark:border-brand-800 dark:bg-brand-950/70 dark:text-brand-50 " +
           (mono ? "font-mono" : "")
         }
       >
@@ -41,14 +41,14 @@ export function CopyField({
         onClick={copy}
         className={
           (copied
-            ? "inline-flex items-center justify-center gap-1.5 rounded-xl border border-brand-300 bg-brand-50 px-4 py-2.5 text-sm font-bold text-brand-800 shadow-2xs"
+            ? "inline-flex items-center justify-center gap-1.5 rounded-xl border border-brand-300 bg-brand-50 px-4 py-2.5 text-sm font-bold text-brand-800 shadow-2xs dark:border-brand-700 dark:bg-brand-900/60 dark:text-brand-200"
             : buttonClass("secondary")) + " shrink-0 transition-all duration-200"
         }
         aria-live="polite"
       >
         {copied ? (
           <>
-            <span className="text-brand-700">✓</span> {copiedLabel}
+            <span className="text-brand-700 dark:text-brand-300">✓</span> {copiedLabel}
           </>
         ) : (
           label

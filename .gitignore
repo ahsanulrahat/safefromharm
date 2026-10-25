@@ -48,3 +48,6 @@ next-env.d.ts
 /public/fonts/*.otf
 /public/signature*.png
 /public/scout-logo.png
+
+# Next.js auto-generated agent rules
+AGENTS.md

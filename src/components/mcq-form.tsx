@@ -44,14 +44,14 @@ export function McqForm({
       <input type="hidden" name="moduleSlug" value={moduleSlug} />
       <input type="hidden" name="stepId" value={stepId} />
       <fieldset>
-        <legend className="text-base font-bold leading-snug text-brand-950 sm:text-lg">
+        <legend className="text-base font-bold leading-snug text-brand-950 dark:text-brand-50 sm:text-lg">
           {prompt}
         </legend>
         <div className="mt-4 space-y-3">
           {options.map((option) => (
             <label
               key={option.id}
-              className="group relative flex cursor-pointer items-start gap-3.5 rounded-xl border border-brand-200/80 bg-white/70 p-3.5 text-sm font-medium text-brand-950 shadow-xs transition-all duration-200 hover:border-brand-400 hover:bg-brand-50/40 hover:shadow-sm has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50/90 has-[:checked]:shadow-xs has-[:checked]:ring-2 has-[:checked]:ring-brand-500/20"
+              className="group relative flex cursor-pointer items-start gap-3.5 rounded-xl border border-brand-200/80 bg-white/70 p-3.5 text-sm font-medium text-brand-950 shadow-xs transition-all duration-200 hover:border-brand-400 hover:bg-brand-50/40 hover:shadow-sm has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50/90 has-[:checked]:shadow-xs has-[:checked]:ring-2 has-[:checked]:ring-brand-500/20 dark:border-brand-800 dark:bg-brand-950/60 dark:text-brand-100 dark:hover:bg-brand-900/40 dark:has-[:checked]:border-brand-500 dark:has-[:checked]:bg-brand-900/60"
             >
               <input
                 type="radio"
@@ -61,7 +61,7 @@ export function McqForm({
                 defaultChecked={existingOptionId === option.id}
                 className="mt-0.5 h-4 w-4 shrink-0 border-brand-300 text-brand-700 accent-brand-700 transition focus:ring-brand-400"
               />
-              <span className="leading-relaxed transition-colors group-hover:text-brand-900 group-has-[:checked]:font-semibold group-has-[:checked]:text-brand-950">
+              <span className="leading-relaxed transition-colors group-hover:text-brand-900 dark:group-hover:text-white group-has-[:checked]:font-semibold group-has-[:checked]:text-brand-950 dark:group-has-[:checked]:text-white">
                 {option.label}
               </span>
             </label>
@@ -80,8 +80,8 @@ export function McqForm({
           className={
             "mt-4 flex items-start gap-2.5 rounded-xl border p-3.5 text-sm font-semibold transition-all " +
             (state.correct
-              ? "border-brand-200 bg-brand-50/90 text-brand-900"
-              : "border-gold-300 bg-gold-50/90 text-gold-950")
+              ? "border-brand-200 bg-brand-50/90 text-brand-900 dark:border-brand-800 dark:bg-brand-900/60 dark:text-brand-200"
+              : "border-gold-300 bg-gold-50/90 text-gold-950 dark:border-gold-800 dark:bg-gold-950/60 dark:text-gold-200")
           }
           role="status"
           aria-live="polite"
@@ -103,7 +103,7 @@ export function McqForm({
       )}
 
       {state.ok && state.correct === undefined && (
-        <p className="mt-3.5 text-sm font-medium text-brand-800" role="status">
+        <p className="mt-3.5 text-sm font-medium text-brand-800 dark:text-brand-300" role="status">
           {labels.answeredNote}
         </p>
       )}

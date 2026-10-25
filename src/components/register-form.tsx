@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { registerAction, type RegisterState } from "@/actions/register";
 import { buttonClass, errorClass, hintClass, inputClass, labelClass } from "@/components/ui";
@@ -11,7 +11,6 @@ const initialState: RegisterState = {};
 export function RegisterForm({ locale }: { locale: AppLocale }) {
   const t = useTranslations("register");
   const [state, action, pending] = useActionState(registerAction, initialState);
-  const [isMinor, setIsMinor] = useState(state.values?.isMinor === "on");
 
   function fieldError(name: string) {
     return state.fieldErrors?.[name];
@@ -36,14 +35,14 @@ export function RegisterForm({ locale }: { locale: AppLocale }) {
       {state.error && (
         <div
           role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800"
+          className="rounded-xl border border-red-200 bg-red-50/90 p-4 text-sm font-semibold text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
         >
           {state.error}
         </div>
       )}
 
       {state.fieldErrors && (
-        <p className="text-sm font-semibold text-red-800" role="status">
+        <p className="text-sm font-semibold text-red-700 dark:text-red-300" role="status">
           {t("errorTitle")}
         </p>
       )}
@@ -227,54 +226,25 @@ export function RegisterForm({ locale }: { locale: AppLocale }) {
             </p>
           )}
         </div>
-        <p className="text-xs text-muted sm:col-span-2">{t("contactHint")}</p>
+        <p className="text-xs text-muted dark:text-brand-300 sm:col-span-2">{t("contactHint")}</p>
       </div>
 
-      <fieldset className="space-y-3 rounded-xl border border-brand-100 bg-brand-50/50 p-4">
-        <legend className="px-1 text-sm font-bold text-brand-900">
+      <fieldset className="space-y-3 rounded-2xl border border-brand-100 bg-brand-50/50 p-4 sm:p-5 dark:border-brand-900/80 dark:bg-brand-950/40">
+        <legend className="px-1 text-sm font-bold text-brand-950 dark:text-brand-100">
           {t("consentTitle")}
         </legend>
-        <label className="flex items-start gap-3 text-sm text-brand-950">
-          <input
-            type="checkbox"
-            name="isMinor"
-            checked={isMinor}
-            onChange={(event) => setIsMinor(event.target.checked)}
-            className="mt-0.5 h-5 w-5 rounded border-brand-300 text-brand-700 focus:ring-brand-300"
-          />
-          <span>{t("minorLabel")}</span>
-        </label>
-        {isMinor && (
-          <label className="flex items-start gap-3 text-sm text-brand-950">
-            <input
-              type="checkbox"
-              name="guardianConsent"
-              defaultChecked={state.values?.guardianConsent === "on"}
-              className="mt-0.5 h-5 w-5 rounded border-brand-300 text-brand-700 focus:ring-brand-300"
-              aria-describedby="guardianConsent-error"
-            />
-            <span>
-              {t("guardianLabel")}
-              {fieldError("guardianConsent") && (
-                <span id="guardianConsent-error" className="mt-1 block text-sm font-medium text-red-700" role="alert">
-                  {fieldError("guardianConsent")}
-                </span>
-              )}
-            </span>
-          </label>
-        )}
-        <label className="flex items-start gap-3 text-sm font-medium text-brand-950">
+        <label className="flex items-start gap-3 text-sm font-medium text-brand-950 dark:text-brand-100 cursor-pointer">
           <input
             type="checkbox"
             name="consent"
             defaultChecked={state.values?.consent === "on"}
-            className="mt-0.5 h-5 w-5 rounded border-brand-300 text-brand-700 focus:ring-brand-300"
+            className="mt-0.5 h-5 w-5 rounded border-brand-300 text-brand-700 accent-brand-700 focus:ring-brand-300"
             aria-describedby="consent-error"
           />
-          <span>
+          <span className="leading-relaxed">
             {t("consent")}
             {fieldError("consent") && (
-              <span id="consent-error" className="mt-1 block text-sm font-medium text-red-700" role="alert">
+              <span id="consent-error" className="mt-1 block text-sm font-semibold text-red-600 dark:text-red-400" role="alert">
                 {fieldError("consent")}
               </span>
             )}
@@ -282,7 +252,7 @@ export function RegisterForm({ locale }: { locale: AppLocale }) {
         </label>
       </fieldset>
 
-      <button type="submit" disabled={pending} className={buttonClass("primary") + " w-full"}>
+      <button type="submit" disabled={pending} className={buttonClass("primary") + " w-full py-3.5 shadow-sm"}>
         {pending ? t("submitting") : t("submit")}
       </button>
     </form>

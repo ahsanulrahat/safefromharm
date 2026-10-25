@@ -371,7 +371,7 @@ export async function getDashboardData() {
 
   const audienceOrder = new Map(AUDIENCES.map((audience, index) => [audience, index]));
   const audiences = sectionGroups
-    .map((row) => ({ name: (row as any).audience as string, count: row._count._all }))
+    .map((row) => ({ name: row.audience, count: row._count._all }))
     .sort(
       (a, b) =>
         (audienceOrder.get(a.name as Audience) ?? 0) -

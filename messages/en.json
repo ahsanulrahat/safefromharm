@@ -24,7 +24,17 @@
     "copied": "Copied",
     "back": "Back",
     "loading": "Loading…",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "navAbout": "About",
+    "navModules": "Modules",
+    "navHowItWorks": "How it works",
+    "navFaq": "FAQ",
+    "navRegister": "Register",
+    "theme": "Theme",
+    "themeLight": "Light mode",
+    "themeDark": "Dark mode",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
   },
   "validation": {
     "fullNameBn": "Please enter your full name in Bangla (at least 2 characters).",
@@ -84,7 +94,23 @@
     "ctaBody": "Keep your Scout ID nearby. Registration takes about two minutes.",
     "statParticipants": "Participants",
     "statCertificates": "Certificates issued",
-    "statModules": "Modules"
+    "statModules": "Modules",
+    "modulesTitle": "Course modules",
+    "modulesIntro": "Three practical modules designed to build awareness and proactive safeguarding.",
+    "faqTitle": "Frequently asked questions",
+    "faqSubtitle": "Common questions about participation, completion, and certificates.",
+    "faq1Q": "Who needs to complete Safe from Harm for Scout Moot 2026?",
+    "faq1A": "All adult participants, Rover Scouts, and leaders attending Scout Moot 2026 are required to complete this training before arrival in Dhaka.",
+    "faq2Q": "How long does the course take to finish?",
+    "faq2A": "The course is self-paced and typically takes between 20 and 30 minutes to complete in full.",
+    "faq3Q": "Can I complete the course on a mobile phone?",
+    "faq3A": "Yes. The entire platform is fully responsive and optimized for smartphones, tablets, and computers.",
+    "faq4Q": "What if I get disconnected or need to resume later?",
+    "faq4A": "Your progress saves automatically after every question and module. Use your 8-character resume code or Scout ID on the Resume page to continue at any time.",
+    "faq5Q": "How do I receive my certificate?",
+    "faq5A": "Once all required modules and evaluations are completed, your official certificate is automatically issued. You can download the PDF or verify it via QR code.",
+    "faq6Q": "How is my personal information protected?",
+    "faq6A": "We collect only what is strictly necessary. Sensitive reflection responses are encrypted using AES-256-GCM and accessible solely to designated safeguarding officers."
   },
   "register": {
     "title": "Register",

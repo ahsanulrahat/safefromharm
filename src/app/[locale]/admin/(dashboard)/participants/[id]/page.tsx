@@ -96,7 +96,7 @@ export default async function ParticipantDetailPage({
           <Detail label={t("district")} value={participant.district} />
           <Detail
             label={t("memberType") ?? t("section")}
-            value={(() => { const a = (participant as any).audience as Audience | undefined; return a ? tr(`memberTypes.${audienceKey[a]}`) : "-" })()}
+            value={(() => { const a = participant.audience; return a ? tr(`memberTypes.${audienceKey[a]}`) : "-" })()}
           />
           <Detail
             label={t("phone")}

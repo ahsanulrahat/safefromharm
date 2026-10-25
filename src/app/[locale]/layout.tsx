@@ -75,8 +75,16 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       className={`${inter.variable} ${notoBengali.variable}`}
+      suppressHydrationWarning
     >
-      <body className="flex min-h-screen flex-col">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("scout_theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="flex min-h-screen flex-col bg-surface-cream text-ink dark:bg-[#0a120e] dark:text-[#f0f6f3] transition-colors duration-200">
         <NextIntlClientProvider messages={messages} locale={locale}>
           <a href="#main-content" className="skip-link">
             {t("skip")}

@@ -41,8 +41,8 @@ export function registrationSchema(m: RegistrationMessages) {
       }),
       phone: z.string().trim().regex(phonePattern, m.phone).optional(),
       email: z.string().trim().regex(emailPattern, m.email).optional(),
-      isMinor: z.boolean(),
-      guardianConsent: z.boolean(),
+      isMinor: z.boolean().default(false),
+      guardianConsent: z.boolean().default(false),
       consent: z.boolean(),
     })
     .superRefine((data, ctx) => {

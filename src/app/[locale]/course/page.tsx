@@ -33,21 +33,21 @@ export default async function CoursePage({
   return (
     <div className="relative mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
       {/* Decorative backdrop glow */}
-      <div className="pointer-events-none absolute -top-12 right-0 -z-10 h-72 w-72 rounded-full bg-brand-500/5 blur-3xl" />
+      <div className="pointer-events-none absolute -top-12 right-0 -z-10 h-72 w-72 rounded-full bg-brand-500/5 blur-3xl dark:bg-brand-500/5" />
       <div className="pointer-events-none absolute top-40 left-0 -z-10 h-72 w-72 rounded-full bg-scout-red/5 blur-3xl" />
 
       {/* Top Header Card */}
-      <div className="rounded-2xl border border-brand-100 bg-white/80 p-6 shadow-xs backdrop-blur-md sm:p-8">
+      <div className="rounded-2xl border border-brand-100 bg-white/80 p-6 shadow-xs backdrop-blur-md dark:border-brand-900/80 dark:bg-brand-950/70 sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-gold-200 bg-gold-50/80 px-3 py-1 text-xs font-bold uppercase tracking-wider text-gold-800">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-gold-200 bg-gold-50/80 px-3 py-1 text-xs font-bold uppercase tracking-wider text-gold-800 dark:border-gold-800 dark:bg-gold-950/50 dark:text-gold-300">
               <span className="h-1.5 w-1.5 rounded-full bg-scout-red animate-pulse" />
               {tc("brand")}
             </span>
-            <h1 className="mt-2 text-3xl font-black tracking-tight text-brand-950 sm:text-4xl">
+            <h1 className="mt-2 text-3xl font-black tracking-tight text-brand-950 dark:text-brand-50 sm:text-4xl">
               {t("title")}
             </h1>
-            <p className="mt-1.5 font-medium text-brand-800">
+            <p className="mt-1.5 font-medium text-brand-800 dark:text-brand-300">
               {t("welcome", { name: participant.fullNameBn })}
             </p>
           </div>
@@ -59,23 +59,23 @@ export default async function CoursePage({
           </form>
         </div>
 
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted dark:text-brand-300">
           {t("subtitle")}
         </p>
 
         {/* Certificate banner if ready */}
         {state.activeCertificate && (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 via-white to-brand-50/50 p-5 shadow-xs">
+          <div className="mt-6 overflow-hidden rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 via-white to-brand-50/50 p-5 shadow-xs dark:border-brand-800 dark:from-brand-950 dark:via-brand-900/60 dark:to-brand-950">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3.5">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white shadow-xs">
                   <CheckIcon className="h-6 w-6" />
                 </span>
                 <div>
-                  <h2 className="text-base font-bold text-brand-950 sm:text-lg">
+                  <h2 className="text-base font-bold text-brand-950 dark:text-brand-50 sm:text-lg">
                     {t("certReadyTitle")}
                   </h2>
-                  <p className="mt-0.5 text-sm text-brand-800">
+                  <p className="mt-0.5 text-sm text-brand-800 dark:text-brand-300">
                     {t("certReadyBody")}
                   </p>
                 </div>
@@ -91,17 +91,17 @@ export default async function CoursePage({
         )}
 
         {/* Progress bar */}
-        <section className="mt-6 rounded-xl border border-brand-100/80 bg-brand-50/40 p-4">
+        <section className="mt-6 rounded-xl border border-brand-100/80 bg-brand-50/40 p-4 dark:border-brand-800/60 dark:bg-brand-900/40">
           <div className="flex items-center justify-between text-sm">
-            <span className="font-semibold text-brand-950">
+            <span className="font-semibold text-brand-950 dark:text-brand-100">
               {t("progressLabel")}
             </span>
-            <span className="font-bold text-brand-700">
+            <span className="font-bold text-brand-700 dark:text-brand-300">
               {completed} / {total} · {percent}%
             </span>
           </div>
           <div
-            className="mt-2.5 h-3 overflow-hidden rounded-full bg-brand-100 shadow-inner"
+            className="mt-2.5 h-3 overflow-hidden rounded-full bg-brand-100 shadow-inner dark:bg-brand-950"
             role="progressbar"
             aria-valuemin={0}
             aria-valuemax={100}
@@ -132,10 +132,10 @@ export default async function CoursePage({
               className={
                 "group relative overflow-hidden rounded-2xl border p-5 shadow-xs transition-all duration-200 sm:p-6 " +
                 (isComplete
-                  ? "border-brand-200/90 bg-white hover:border-brand-300 hover:shadow-md"
+                  ? "border-brand-200/90 bg-white hover:border-brand-300 hover:shadow-md dark:border-brand-800 dark:bg-brand-950/60"
                   : unlocked
-                    ? "border-brand-200 bg-white hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md"
-                    : "border-brand-100/60 bg-white/60 opacity-80")
+                    ? "border-brand-200 bg-white hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md dark:border-brand-900/80 dark:bg-brand-950/50"
+                    : "border-brand-100/60 bg-white/60 opacity-80 dark:border-brand-900/40 dark:bg-brand-950/30")
               }
             >
               {isComplete && (
@@ -147,16 +147,16 @@ export default async function CoursePage({
 
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0 flex-1 pl-2">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-100 text-[11px] font-bold text-brand-800">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted dark:text-brand-400">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-100 text-[11px] font-bold text-brand-800 dark:bg-brand-800 dark:text-brand-100">
                       {index + 1}
                     </span>
                     {t("moduleLabel", { number: index + 1 })}
                   </span>
-                  <h2 className="mt-1 text-lg font-bold text-brand-950 sm:text-xl">
+                  <h2 className="mt-1 text-lg font-bold text-brand-950 dark:text-brand-50 sm:text-xl">
                     {title}
                   </h2>
-                  <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted">
+                  <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted dark:text-brand-300">
                     {description}
                   </p>
                 </div>
@@ -167,8 +167,8 @@ export default async function CoursePage({
                     (isComplete
                       ? "bg-brand-700 text-white"
                       : unlocked
-                        ? "bg-gold-100 text-gold-900 border border-gold-200"
-                        : "bg-surface-cream text-muted border border-brand-100")
+                        ? "bg-gold-100 text-gold-900 border border-gold-200 dark:bg-gold-950/60 dark:text-gold-200 dark:border-gold-800"
+                        : "bg-surface-cream text-muted border border-brand-100 dark:bg-brand-900/40 dark:text-brand-400 dark:border-brand-800")
                   }
                 >
                   {isComplete ? (
@@ -194,7 +194,7 @@ export default async function CoursePage({
                     {isComplete ? t("review") : t("continue")}
                   </Link>
                   {evaluation && !isComplete && (
-                    <p className="text-xs font-medium text-muted">
+                    <p className="text-xs font-medium text-muted dark:text-brand-400">
                       {tm("mcqProgress", {
                         correct: evaluation.mcqCorrect,
                         total: evaluation.mcqTotal,
@@ -204,14 +204,14 @@ export default async function CoursePage({
                   )}
                 </div>
               ) : (
-                <p className="mt-4 pl-2 text-sm text-muted">{t("locked")}</p>
+                <p className="mt-4 pl-2 text-sm text-muted dark:text-brand-400">{t("locked")}</p>
               )}
             </article>
           );
         })}
       </div>
 
-      <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/70 p-4 text-xs font-medium text-gold-950 shadow-xs">
+      <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/70 p-4 text-xs font-medium text-gold-950 shadow-xs dark:border-gold-900/80 dark:bg-gold-950/40 dark:text-gold-200">
         {t("sampleNote")}
       </div>
     </div>
