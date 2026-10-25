@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: "SiyamRupali", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", var(--font-inter), var(--font-noto-bengali), Inter, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "SiyamRupali", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", var(--font-inter), "Noto Sans Bengali", Inter, "Segoe UI", Roboto, sans-serif;
 
   --color-brand-50: #e6f2ee;
   --color-brand-100: #cfe7df;
@@ -165,7 +165,7 @@
   }
 
   :lang(bn) {
-    font-family: "SiyamRupali", var(--font-noto-bengali), sans-serif;
+    font-family: "SiyamRupali", "Noto Sans Bengali", sans-serif;
     line-height: 1.7;
   }
 
