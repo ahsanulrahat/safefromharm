@@ -6,6 +6,7 @@ import { signOutParticipantAction } from "@/actions/resume";
 import { CheckIcon, LockIcon } from "@/components/icons";
 import { buttonClass } from "@/components/ui";
 import type { AppLocale } from "@/i18n/routing";
+import { localizedText } from "@/i18n/localized";
 
 export const dynamic = "force-dynamic";
 
@@ -122,9 +123,8 @@ export default async function CoursePage({
           const evaluation = state.evaluations.find((e) => e.moduleId === module.id);
           const isComplete = Boolean(evaluation?.complete);
           const unlocked = Boolean(state.unlocked[module.id]);
-          const title = locale === "bn" ? module.titleBn : module.titleEn;
-          const description =
-            locale === "bn" ? module.descriptionBn : module.descriptionEn;
+          const title = localizedText(locale, module.titleBn, module.titleEn);
+          const description = localizedText(locale, module.descriptionBn, module.descriptionEn);
 
           return (
             <article

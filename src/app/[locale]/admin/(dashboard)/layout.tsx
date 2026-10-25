@@ -4,6 +4,8 @@ import { requireAdmin } from "@/lib/admin";
 import { logoutAction } from "@/actions/auth";
 import { CompassMark } from "@/components/icons";
 import { SafeguardingBox } from "@/components/safeguarding-box";
+import { LocaleControls } from "@/components/locale-controls";
+import type { AppLocale } from "@/i18n/routing";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +17,7 @@ export default async function AdminProtectedLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const appLocale = locale as AppLocale;
   const admin = await requireAdmin(locale);
   const t = await getTranslations("admin.nav");
   const tc = await getTranslations("common");
@@ -45,12 +48,13 @@ export default async function AdminProtectedLayout({
               <span className="leading-tight">
                 <span className="block text-sm font-black tracking-tight">{tc("brand")}</span>
                 <span className="block text-[11px] font-medium text-brand-300">
-                  Admin · <span className="rounded bg-brand-800/80 px-1 py-0.5 text-gold-300 font-semibold">{admin.role}</span>
+                  {tc("adminPortal")} · <span className="rounded bg-brand-800/80 px-1 py-0.5 text-gold-300 font-semibold">{admin.role}</span>
                 </span>
               </span>
             </Link>
             <div className="flex items-center gap-2 text-xs">
               <span className="hidden font-mono text-xs text-brand-300 sm:inline">{admin.email}</span>
+              <LocaleControls locale={appLocale} />
               <Link
                 href="/"
                 className="rounded-xl border border-brand-700/80 bg-white/5 px-2.5 py-1.5 font-semibold text-brand-100 transition hover:bg-white/10 hover:text-white"
@@ -68,7 +72,7 @@ export default async function AdminProtectedLayout({
               </form>
             </div>
           </div>
-          <nav aria-label="Admin" className="-mx-1 flex gap-1 overflow-x-auto pb-2.5 scrollbar-none">
+          <nav aria-label={t("navLabel")} className="-mx-1 flex gap-1 overflow-x-auto pb-2.5 scrollbar-none">
             {links.map((link) => (
               <Link
                 key={link.href}

@@ -14,7 +14,7 @@ import {
   YAxis,
 } from "recharts";
 
-const COLORS = ["#23724c", "#dba934", "#1d5b3e", "#a66d1b", "#56ab7e", "#85511a"];
+const COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)", "var(--chart-6)"];
 
 export function RegistrationsChart({
   data,
@@ -27,17 +27,17 @@ export function RegistrationsChart({
     <div className="h-64 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 8, right: 12, left: -18, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#dcefe2" />
-          <XAxis dataKey="date" tick={{ fontSize: 11 }} tickLine={false} />
-          <YAxis allowDecimals={false} tick={{ fontSize: 11 }} tickLine={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+          <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--text-secondary)" }} tickLine={false} />
+          <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--text-secondary)" }} tickLine={false} />
           <Tooltip
-            contentStyle={{ borderRadius: 8, borderColor: "#b9dfc5", fontSize: 12 }}
+            contentStyle={{ borderRadius: 8, borderColor: "var(--border-card)", backgroundColor: "var(--bg-card)", color: "var(--text-primary)", fontSize: 12 }}
             labelFormatter={(value) => `${label}: ${value}`}
           />
           <Line
             type="monotone"
             dataKey="count"
-            stroke="#23724c"
+            stroke="var(--chart-1)"
             strokeWidth={2.5}
             dot={false}
             activeDot={{ r: 4 }}
@@ -50,7 +50,7 @@ export function RegistrationsChart({
 
 export function SimpleBarChart({
   data,
-  color = "#23724c",
+  color = "var(--chart-1)",
   horizontal = false,
 }: {
   data: Array<{ name: string; count: number }>;
@@ -65,25 +65,25 @@ export function SimpleBarChart({
           layout={horizontal ? "vertical" : "horizontal"}
           margin={{ top: 8, right: 12, left: horizontal ? 8 : -18, bottom: 0 }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#dcefe2" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
           {horizontal ? (
             <>
-              <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11 }} />
+              <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "var(--text-secondary)" }} />
               <YAxis
                 type="category"
                 dataKey="name"
                 width={110}
-                tick={{ fontSize: 11 }}
+                tick={{ fontSize: 11, fill: "var(--text-secondary)" }}
                 tickLine={false}
               />
             </>
           ) : (
             <>
-              <XAxis dataKey="name" tick={{ fontSize: 11 }} tickLine={false} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 11 }} tickLine={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--text-secondary)" }} tickLine={false} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--text-secondary)" }} tickLine={false} />
             </>
           )}
-          <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#b9dfc5", fontSize: 12 }} />
+          <Tooltip contentStyle={{ borderRadius: 8, borderColor: "var(--border-card)", backgroundColor: "var(--bg-card)", color: "var(--text-primary)", fontSize: 12 }} />
           <Bar dataKey="count" fill={color} radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
@@ -100,14 +100,14 @@ export function FunnelChart({
     <div className="h-80 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 12, left: -18, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#dcefe2" />
-          <XAxis dataKey="name" tick={{ fontSize: 10 }} tickLine={false} interval={0} />
-          <YAxis allowDecimals={false} tick={{ fontSize: 11 }} tickLine={false} />
-          <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#b9dfc5", fontSize: 12 }} />
-          <Legend wrapperStyle={{ fontSize: 11 }} />
-          <Bar dataKey="started" fill="#dcefe2" radius={[3, 3, 0, 0]} />
-          <Bar dataKey="watched" fill="#56ab7e" radius={[3, 3, 0, 0]} />
-          <Bar dataKey="completed" fill="#1d5b3e" radius={[3, 3, 0, 0]} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+          <XAxis dataKey="name" tick={{ fontSize: 10, fill: "var(--text-secondary)" }} tickLine={false} interval={0} />
+          <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--text-secondary)" }} tickLine={false} />
+          <Tooltip contentStyle={{ borderRadius: 8, borderColor: "var(--border-card)", backgroundColor: "var(--bg-card)", color: "var(--text-primary)", fontSize: 12 }} />
+          <Legend wrapperStyle={{ fontSize: 11, color: "var(--text-secondary)" }} />
+          <Bar dataKey="started" fill="var(--chart-2)" radius={[3, 3, 0, 0]} />
+          <Bar dataKey="watched" fill="var(--chart-5)" radius={[3, 3, 0, 0]} />
+          <Bar dataKey="completed" fill="var(--chart-1)" radius={[3, 3, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -119,10 +119,10 @@ export function SectionChart({ data }: { data: Array<{ name: string; count: numb
     <div className="h-64 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 12, left: -18, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#dcefe2" />
-          <XAxis dataKey="name" tick={{ fontSize: 11 }} tickLine={false} />
-          <YAxis allowDecimals={false} tick={{ fontSize: 11 }} tickLine={false} />
-          <Tooltip contentStyle={{ borderRadius: 8, borderColor: "#b9dfc5", fontSize: 12 }} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+          <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--text-secondary)" }} tickLine={false} />
+          <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--text-secondary)" }} tickLine={false} />
+          <Tooltip contentStyle={{ borderRadius: 8, borderColor: "var(--border-card)", backgroundColor: "var(--bg-card)", color: "var(--text-primary)", fontSize: 12 }} />
           <Bar dataKey="count" radius={[4, 4, 0, 0]}>
             {data.map((entry, index) => (
               <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />

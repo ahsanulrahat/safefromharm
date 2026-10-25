@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getParticipantId } from "@/lib/participant-session";
 import { redirect } from "next/navigation";
+import { localePath } from "@/i18n/locale-path";
 
 /**
  * Server-only helper for participant pages. Redirects to the resume page
@@ -8,9 +9,9 @@ import { redirect } from "next/navigation";
  */
 export async function requireParticipant(locale: string) {
   const id = await getParticipantId();
-  if (!id) redirect(`/${locale}/resume`);
+  if (!id) redirect(localePath(locale, "/resume"));
   const participant = await prisma.participant.findUnique({ where: { id } });
-  if (!participant) redirect(`/${locale}/resume`);
+  if (!participant) redirect(localePath(locale, "/resume"));
   return participant;
 }
 

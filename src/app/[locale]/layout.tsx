@@ -74,17 +74,18 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
+      data-scroll-behavior="smooth"
       className={`${inter.variable} ${notoBengali.variable}`}
       suppressHydrationWarning
     >
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("scout_theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}}catch(e){}})();`,
+            __html: `(function(){try{var r=document.documentElement,t=localStorage.getItem("scout_theme")||"system";r.dataset.themePreference=t;var d=t==="dark"||(t==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);r.classList.toggle("dark",d)}catch(e){}})();`,
           }}
         />
       </head>
-      <body className="flex min-h-screen flex-col bg-surface-cream text-ink dark:bg-[#0a120e] dark:text-[#f0f6f3] transition-colors duration-200">
+      <body className="flex min-h-screen flex-col bg-surface-cream text-ink transition-colors duration-200">
         <NextIntlClientProvider messages={messages} locale={locale}>
           <a href="#main-content" className="skip-link">
             {t("skip")}

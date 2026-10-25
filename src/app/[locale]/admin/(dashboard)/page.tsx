@@ -121,7 +121,7 @@ export default async function AdminDashboardPage({
         <StatCard
           label={t("completers")}
           value={String(data.completers)}
-          hint={t("completionRate") + ": " + formatPercent(data.completionRate)}
+          hint={t("completionRate") + ": " + formatPercent(data.completionRate, locale)}
           accent
         />
         <StatCard
@@ -134,7 +134,7 @@ export default async function AdminDashboardPage({
         />
         <StatCard
           label={t("completionRate")}
-          value={formatPercent(data.completionRate)}
+          value={formatPercent(data.completionRate, locale)}
         />
       </div>
 

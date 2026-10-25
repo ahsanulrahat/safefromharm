@@ -6,6 +6,7 @@ import { safeAdminCallback } from "@/lib/admin-callback";
 import { AdminLoginForm } from "@/components/admin/admin-login-form";
 import { CompassMark } from "@/components/icons";
 import type { AppLocale } from "@/i18n/routing";
+import { LocaleControls } from "@/components/locale-controls";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,10 @@ export default async function AdminLoginPage({
   const tc = await getTranslations("common");
 
   return (
-    <div className="mx-auto max-w-md px-4 py-14 sm:px-6 sm:py-20">
+    <div className="relative mx-auto max-w-md px-4 py-14 sm:px-6 sm:py-20">
+      <div className="absolute right-4 top-3 flex items-center gap-2 sm:right-6">
+        <LocaleControls locale={locale} />
+      </div>
       <div className="text-center">
         <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-100 text-brand-700">
           <CompassMark className="h-8 w-8" />

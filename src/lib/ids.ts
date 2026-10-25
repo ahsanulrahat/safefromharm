@@ -8,12 +8,20 @@ export function newResumeCode() {
 }
 
 export function normalizeScoutId(value: string) {
-  return value.trim().toUpperCase().replace(/\s+/g, "");
+  return normalizeDigits(value).trim().toUpperCase().replace(/\s+/g, "");
 }
 
 export function normalizePhone(value: string) {
-  const digits = value.replace(/[^\d+]/g, "").replace(/(?!^)\+/g, "");
+  const digits = normalizeDigits(value).replace(/[^\d+]/g, "").replace(/(?!^)\+/g, "");
   return digits;
+}
+
+/** Converts Bengali and Arabic-Indic numerals to ASCII before validation/storage. */
+export function normalizeDigits(value: string) {
+  return value.replace(/[০-৯٠-٩]/g, (digit) => {
+    const code = digit.codePointAt(0)!;
+    return String(code >= 0x09e6 && code <= 0x09ef ? code - 0x09e6 : code - 0x0660);
+  });
 }
 
 export function normalizeEmail(value: string) {

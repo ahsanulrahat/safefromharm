@@ -3,6 +3,8 @@
 import { useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 
+type ThemePreference = "system" | "light" | "dark";
+
 function subscribe(callback: () => void) {
   window.addEventListener("storage", callback);
   window.addEventListener("scout-theme-change", callback);
@@ -16,78 +18,40 @@ function subscribe(callback: () => void) {
 }
 
 function getSnapshot() {
-  return document.documentElement.classList.contains("dark");
+  return `${document.documentElement.dataset.themePreference ?? "system"}:${document.documentElement.classList.contains("dark")}`;
 }
 
 function getServerSnapshot() {
-  return false;
+  return "system:false";
+}
+
+function setPreference(theme: ThemePreference) {
+  localStorage.setItem("scout_theme", theme);
+  const root = document.documentElement;
+  root.dataset.themePreference = theme;
+  const dark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  root.classList.toggle("dark", dark);
+  window.dispatchEvent(new Event("scout-theme-change"));
 }
 
 export function ThemeToggle({ className = "" }: { className?: string }) {
-  const isDark = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const [preference, dark] = snapshot.split(":") as [ThemePreference, string];
   const t = useTranslations("common");
-
-  function toggle() {
-    const next = isDark ? "light" : "dark";
-    localStorage.setItem("scout_theme", next);
-    if (next === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    window.dispatchEvent(new Event("scout-theme-change"));
-  }
-
-  const label = isDark ? t("themeLight") : t("themeDark");
+  const label = preference === "system" ? t("themeSystem") : preference === "dark" ? t("themeDark") : t("themeLight");
 
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      className={`inline-flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-brand-200/80 bg-white/90 text-brand-900 shadow-2xs transition-all duration-200 hover:border-brand-300 hover:bg-brand-50 active:scale-95 dark:border-brand-800 dark:bg-brand-900/60 dark:text-brand-100 dark:hover:bg-brand-800 ${className}`}
-      title={label}
-      aria-label={label}
-      aria-pressed={isDark}
-    >
-      {isDark ? (
-        // Sun icon for switching to light mode
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-4 w-4 text-gold-400"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2" />
-          <path d="M12 20v2" />
-          <path d="m4.93 4.93 1.41 1.41" />
-          <path d="m17.66 17.66 1.41 1.41" />
-          <path d="M2 12h2" />
-          <path d="M20 12h2" />
-          <path d="m6.34 17.66-1.41 1.41" />
-          <path d="m19.07 4.93-1.41 1.41" />
-        </svg>
-      ) : (
-        // Moon icon for switching to dark mode
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-4 w-4 text-brand-800"
-          aria-hidden="true"
-        >
-          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-        </svg>
-      )}
-    </button>
+    <details className={`theme-control relative ${className}`}>
+      <summary className="flex h-11 w-11 min-h-[44px] min-w-[44px] cursor-pointer list-none items-center justify-center rounded-xl border border-brand-200/80 bg-white/90 text-brand-900 shadow-2xs hover:bg-brand-50 dark:border-brand-800 dark:bg-brand-900/60 dark:text-brand-100" aria-label={`${t("theme")}: ${label}`} title={`${t("theme")}: ${label}`}>
+        <span aria-hidden="true" className="text-lg">{preference === "system" ? "◐" : dark === "true" ? "☀" : "☾"}</span>
+      </summary>
+      <div className="absolute right-0 top-full z-50 mt-2 min-w-40 rounded-xl border border-border bg-card p-1 shadow-lg" role="group" aria-label={t("theme")}>
+        {(["light", "dark", "system"] as const).map((theme) => (
+          <button key={theme} type="button" onClick={() => setPreference(theme)} aria-pressed={preference === theme} className="min-h-11 w-full rounded-lg px-3 text-left text-sm text-primary hover:bg-card-subtle focus-visible:outline">
+            {theme === "light" ? t("themeLight") : theme === "dark" ? t("themeDark") : t("themeSystem")}
+          </button>
+        ))}
+      </div>
+    </details>
   );
 }

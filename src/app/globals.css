@@ -22,7 +22,7 @@
   --color-accent-200: #eea5b2;
   --color-accent-300: #e78395;
   --color-accent-400: #e06178;
-  --color-accent-500: #c8102e;
+  --color-accent-500: #c91f35;
   --color-accent-600: #a80d26;
   --color-accent-700: #880a1f;
   --color-accent-800: #680718;
@@ -44,6 +44,10 @@
   --color-ink: #14201b;
   --color-muted: #5b6b63;
   --color-border: #dde5e0;
+  --color-card: var(--bg-card);
+  --color-card-subtle: var(--bg-card-subtle);
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
 
   --animate-fade-in: fade-in 0.5s ease-out both;
   --animate-fade-in-up: fade-in-up 0.6s ease-out both;
@@ -104,21 +108,35 @@
     --text-primary: #14201b;
     --text-secondary: #5b6b63;
     --border-card: #e5ece8;
+    --chart-grid: #dcefe2;
+    --chart-1: #23724c;
+    --chart-2: #dba934;
+    --chart-3: #1d5b3e;
+    --chart-4: #a66d1b;
+    --chart-5: #56ab7e;
+    --chart-6: #85511a;
   }
 
   html.dark {
     color-scheme: dark;
-    --color-cream: #0c1410;
-    --color-surface: #14221b;
-    --color-ink: #f0f6f3;
-    --color-muted: #94aba0;
-    --color-border: #22372c;
-    --bg-page: #0a120e;
-    --bg-card: #122019;
-    --bg-card-subtle: #172820;
-    --text-primary: #f0f6f3;
-    --text-secondary: #94aba0;
-    --border-card: #20362b;
+    --color-cream: #0f1714;
+    --color-surface: #16211c;
+    --color-ink: #e8f0ec;
+    --color-muted: #a9b9b0;
+    --color-border: #34473d;
+    --bg-page: #0f1714;
+    --bg-card: #16211c;
+    --bg-card-subtle: #1c2a23;
+    --text-primary: #e8f0ec;
+    --text-secondary: #b3c2b9;
+    --border-card: #34473d;
+    --chart-grid: #34473d;
+    --chart-1: #4cc38a;
+    --chart-2: #f1c75b;
+    --chart-3: #36a978;
+    --chart-4: #dba934;
+    --chart-5: #8ac9a3;
+    --chart-6: #e7c25f;
   }
 
   @font-face {
@@ -144,6 +162,15 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  :lang(bn) {
+    font-family: "SiyamRupali", var(--font-noto-bengali), sans-serif;
+    line-height: 1.7;
+  }
+
+  :lang(en) {
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
   }
 
   html.dark body {
@@ -198,6 +225,73 @@
       min-height: 44px;
     }
   }
+}
+
+@layer utilities {
+  html.dark .bg-white,
+  html.dark .bg-white\/80,
+  html.dark .bg-white\/90,
+  html.dark .bg-white\/95 {
+    background-color: var(--bg-card);
+  }
+
+  html.dark .text-brand-950,
+  html.dark .text-brand-900,
+  html.dark .text-ink {
+    color: var(--text-primary);
+  }
+
+  html.dark .text-muted {
+    color: var(--text-secondary);
+  }
+
+  html.dark .text-red-700,
+  html.dark .text-red-800,
+  html.dark .text-accent-600 { color: #ff6b7d; }
+  html.dark .text-brand-700 { color: #4cc38a; }
+  html.dark .text-brand-800 { color: #8ac9a3; }
+  html.dark .text-gold-900 { color: #f1c75b; }
+  html.dark .bg-red-50,
+  html.dark .bg-accent-50 { background-color: #341a20; }
+
+  html.dark .bg-gold-400 { background-color: #6f421c; }
+  html.dark .bg-gold-50\/80,
+  html.dark .bg-gold-50,
+  html.dark .bg-gold-100 { background-color: #26291f; }
+  html.dark .text-gold-950,
+  html.dark .text-gold-900 { color: #f1c75b; }
+
+  html.dark .border-brand-50,
+  html.dark .border-brand-100,
+  html.dark .border-brand-200,
+  html.dark .border-border {
+    border-color: var(--border-card);
+  }
+
+  html.dark .bg-brand-50,
+  html.dark .bg-brand-100 {
+    background-color: var(--bg-card-subtle);
+  }
+
+  html.dark .border-red-100,
+  html.dark .border-red-200,
+  html.dark .border-red-300 { border-color: #71313d; }
+
+  html.dark .certificate-preview,
+  html.dark .certificate-preview .bg-white {
+    background-color: #fff;
+    color: #14201b;
+  }
+
+  html.dark .certificate-preview .text-brand-950,
+  html.dark .certificate-preview .text-brand-900,
+  html.dark .certificate-preview .text-ink { color: #14201b; }
+
+  html.dark .certificate-preview .text-muted { color: #526259; }
+
+  html.dark .certificate-preview .bg-brand-50\/30 { background-color: #f4f8f6; }
+
+  html.dark .certificate-preview .border-brand-100\/80 { border-color: #dde5e0; }
 }
 
 @layer components {
@@ -293,3 +387,20 @@
   .stagger-4 { animation-delay: 0.4s; }
   .stagger-5 { animation-delay: 0.5s; }
 }
+
+/* High-specificity theme overrides are kept outside Tailwind layers so they
+   consistently win over generated utility rules in every compiled route. */
+html.dark .bg-gold-400 { background-color: #6f421c; }
+html.dark .bg-gold-50\/80,
+html.dark .bg-gold-50,
+html.dark .bg-gold-100 { background-color: #26291f; }
+html.dark .text-gold-950,
+html.dark .text-gold-900 { color: #f1c75b; }
+html.dark .certificate-preview,
+html.dark .certificate-preview .bg-white { background-color: #fff; color: #14201b; }
+html.dark .certificate-preview .text-brand-950,
+html.dark .certificate-preview .text-brand-900,
+html.dark .certificate-preview .text-ink { color: #14201b; }
+html.dark .certificate-preview .text-muted { color: #526259; }
+html.dark .certificate-preview .bg-brand-50\/30 { background-color: #f4f8f6; }
+html.dark .certificate-preview .border-brand-100\/80 { border-color: #dde5e0; }

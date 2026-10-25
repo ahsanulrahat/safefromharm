@@ -28,6 +28,7 @@ export function ReflectionForm({
     minWords: string;
     savedNote: string;
     hint: string;
+    ready: string;
   };
 }) {
   const [state, action, pending] = useActionState(
@@ -91,7 +92,7 @@ export function ReflectionForm({
             <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand-100 text-brand-800 text-[10px] dark:bg-brand-800 dark:text-brand-100">
               ✓
             </span>
-            Ready
+            {labels.ready}
           </span>
         )}
       </div>

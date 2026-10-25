@@ -138,6 +138,14 @@ export default async function AdminContentPage({
       )
     : JSON.stringify(templateJson(), null, 2);
 
+  const hasLanguageGap = Boolean(selected && (
+    !selected.titleBn.trim() || !selected.titleEn.trim() ||
+    !selected.steps.every((step) => {
+      if (!step.promptBn.trim() || !step.promptEn.trim()) return false;
+      return step.type !== "MCQ" || normalizeOptions(step.options).every((option) => option.bn.trim() && option.en.trim());
+    })
+  ));
+
   const passMark = setting?.value ?? String(DEFAULT_PASS_MARK);
   const showEditor = isNew || Boolean(selected);
 
@@ -256,6 +264,7 @@ export default async function AdminContentPage({
                 locale={locale}
                 originalSlug={selected?.slug ?? ""}
                 initialJson={editorJson}
+                hasLanguageGap={hasLanguageGap}
                 labels={{
                   title: t("editorTitle"),
                   hint: t("editorHint"),
@@ -267,6 +276,7 @@ export default async function AdminContentPage({
                   cancel: t("cancel"),
                   validationTitle: t("validationTitle"),
                   idNote: t("idNote"),
+                  languageGap: t("languageGap"),
                 }}
               />
               <p className="mt-3 text-xs text-muted">

@@ -4,6 +4,7 @@ import { AuthError } from "next-auth";
 import { signIn, signOut } from "@/auth";
 import { getTranslations } from "next-intl/server";
 import { safeAdminCallback } from "@/lib/admin-callback";
+import { localePath } from "@/i18n/locale-path";
 
 export type LoginState = { error?: string };
 
@@ -36,5 +37,5 @@ export async function loginAction(
 
 export async function logoutAction(formData: FormData) {
   const locale = String(formData.get("locale") ?? "bn") === "en" ? "en" : "bn";
-  await signOut({ redirectTo: `/${locale}/admin/login` });
+  await signOut({ redirectTo: localePath(locale, "/admin/login") });
 }

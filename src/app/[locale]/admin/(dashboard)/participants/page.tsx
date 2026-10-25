@@ -253,7 +253,7 @@ export default async function ParticipantsPage({
       {result.pages > 1 && (
         <nav
           className="mt-4 flex items-center justify-between gap-3 text-sm"
-          aria-label="Pagination"
+          aria-label={tc("paginationLabel")}
         >
           {result.page > 1 ? (
             <Link

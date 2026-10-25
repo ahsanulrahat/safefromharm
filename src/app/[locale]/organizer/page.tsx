@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import type { AppLocale } from "@/i18n/routing";
+import { localePath } from "@/i18n/locale-path";
 
 /**
  * Organizer bookmark URL for the admin dashboard (participant counts,
@@ -14,5 +15,5 @@ export default async function OrganizerDashboardEntry({
   params: Promise<{ locale: AppLocale }>;
 }) {
   const { locale } = await params;
-  redirect(`/${locale}/admin`);
+  redirect(localePath(locale, "/admin"));
 }

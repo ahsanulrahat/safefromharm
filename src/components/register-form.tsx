@@ -10,6 +10,7 @@ const initialState: RegisterState = {};
 
 export function RegisterForm({ locale }: { locale: AppLocale }) {
   const t = useTranslations("register");
+  const tc = useTranslations("common");
   const [state, action, pending] = useActionState(registerAction, initialState);
 
   function fieldError(name: string) {
@@ -28,7 +29,7 @@ export function RegisterForm({ locale }: { locale: AppLocale }) {
     <form action={action} className="space-y-5" noValidate>
       <input type="hidden" name="locale" value={locale} />
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-        <label htmlFor="website">Website</label>
+        <label htmlFor="website">{tc("website")}</label>
         <input id="website" name="website" tabIndex={-1} autoComplete="off" />
       </div>
 

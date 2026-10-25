@@ -61,7 +61,7 @@ export default async function CertificatePage({
     );
   }
 
-  const verifyUrl = `${siteUrl}/${locale}/verify/${certificate.id}`;
+  const verifyUrl = `${siteUrl}/verify/${certificate.id}`;
 
   return (
     <div className="relative mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
@@ -80,7 +80,7 @@ export default async function CertificatePage({
       </div>
 
       {/* Certificate Display Card */}
-      <div className="mt-8 overflow-hidden rounded-3xl border-2 border-gold-200/90 bg-white shadow-xl shadow-brand-950/5 dark:border-gold-800/80 dark:bg-brand-950/70">
+      <div className="certificate-preview mt-8 overflow-hidden rounded-3xl border-2 border-gold-200/90 bg-white text-ink shadow-xl shadow-brand-950/5">
         {/* Certificate Header Banner */}
         <div className="relative border-b-2 border-gold-300 dark:border-gold-700 bg-gradient-to-br from-brand-950 via-brand-900 to-brand-950 px-6 py-7 text-center text-white">
           <div className="pointer-events-none absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
@@ -89,7 +89,7 @@ export default async function CertificatePage({
               <CompassMark className="h-6 w-6" />
             </span>
             <p className="mt-3 text-xs font-bold uppercase tracking-[0.25em] text-gold-300">
-              Scout Moot 2026 · Dhaka
+              {tc("eventLine")}
             </p>
             <p className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">
               {tc("course")}
@@ -99,26 +99,26 @@ export default async function CertificatePage({
         </div>
 
         {/* Certificate Body */}
-        <div className="p-6 sm:p-8">
-          <dl className="grid gap-5 rounded-2xl border border-brand-100/80 bg-brand-50/30 p-5 dark:border-brand-800/60 dark:bg-brand-900/30 sm:grid-cols-2">
+        <div className="bg-white p-6 text-ink sm:p-8">
+          <dl className="grid gap-5 rounded-2xl border border-brand-100/80 bg-brand-50/30 p-5 sm:grid-cols-2">
             <div>
-              <dt className="text-xs font-bold uppercase tracking-wider text-muted dark:text-brand-400">
+              <dt className="text-xs font-bold uppercase tracking-wider text-muted">
                 {t("nameLabel")}
               </dt>
-              <dd className="mt-1 text-xl font-black text-brand-950 dark:text-brand-50">
+              <dd className="mt-1 text-xl font-black text-brand-950">
                 {participant.nameEn}
               </dd>
             </div>
             <div>
-              <dt className="text-xs font-bold uppercase tracking-wider text-muted dark:text-brand-400">
+              <dt className="text-xs font-bold uppercase tracking-wider text-muted">
                 {t("issuedLabel")}
               </dt>
-              <dd className="mt-1 text-lg font-bold text-brand-950 dark:text-brand-50">
+              <dd className="mt-1 text-lg font-bold text-brand-950">
                 {formatDate(certificate.issuedAt, locale)}
               </dd>
             </div>
             <div className="sm:col-span-2">
-              <dt className="text-xs font-bold uppercase tracking-wider text-muted dark:text-brand-400">
+              <dt className="text-xs font-bold uppercase tracking-wider text-muted">
                 {t("certId")}
               </dt>
               <dd className="mt-1.5">
@@ -132,7 +132,7 @@ export default async function CertificatePage({
             </div>
           </dl>
 
-          <p className="mt-6 text-sm leading-relaxed text-muted dark:text-brand-300">{t("body")}</p>
+          <p className="mt-6 text-sm leading-relaxed text-muted">{t("body")}</p>
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <a

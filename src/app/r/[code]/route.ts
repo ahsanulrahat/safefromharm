@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { localePath } from "@/i18n/locale-path";
 import { prisma } from "@/lib/prisma";
 import { setParticipantSession } from "@/lib/participant-session";
 import { rateLimit } from "@/lib/rate-limit";
@@ -22,7 +23,7 @@ export async function GET(
     10 * 60_000
   );
   if (!limited.success) {
-    return NextResponse.redirect(new URL(`/${locale}/resume?error=rate`, url.origin));
+    return NextResponse.redirect(new URL(`${localePath(locale, "/resume")}?error=rate`, url.origin));
   }
 
   const participant = await prisma.participant.findUnique({
@@ -30,9 +31,9 @@ export async function GET(
     select: { id: true },
   });
   if (!participant) {
-    return NextResponse.redirect(new URL(`/${locale}/resume`, url.origin));
+    return NextResponse.redirect(new URL(localePath(locale, "/resume"), url.origin));
   }
 
   await setParticipantSession(participant.id);
-  return NextResponse.redirect(new URL(`/${locale}/course`, url.origin));
+  return NextResponse.redirect(new URL(localePath(locale, "/course"), url.origin));
 }

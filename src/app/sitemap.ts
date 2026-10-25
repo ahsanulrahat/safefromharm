@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { localePath } from "@/i18n/locale-path";
 
 const PUBLIC_PATHS = ["", "/register", "/resume", "/verify"] as const;
 
@@ -9,13 +10,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return ["bn", "en"].flatMap((locale) =>
     PUBLIC_PATHS.map((path) => ({
-      url: `${siteUrl}/${locale}${path}`,
+      url: `${siteUrl}${localePath(locale, path || "/")}`,
       changeFrequency: path === "" ? "weekly" : "monthly",
       priority: path === "" ? 1 : 0.6,
       alternates: {
         languages: {
-          bn: `${siteUrl}/bn${path}`,
-          en: `${siteUrl}/en${path}`,
+          bn: `${siteUrl}${localePath("bn", path || "/")}`,
+          en: `${siteUrl}${localePath("en", path || "/")}`,
         },
       },
     }))

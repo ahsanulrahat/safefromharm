@@ -10,6 +10,7 @@ import { ReflectionForm } from "@/components/reflection-form";
 import { CheckIcon } from "@/components/icons";
 import { buttonClass } from "@/components/ui";
 import type { AppLocale } from "@/i18n/routing";
+import { localizedText } from "@/i18n/localized";
 
 export const dynamic = "force-dynamic";
 
@@ -59,9 +60,8 @@ export default async function ModulePage({
   const currentModule = state.modules[moduleIndex];
   const evaluation = state.evaluations.find((e) => e.moduleId === currentModule.id);
   const unlocked = Boolean(state.unlocked[currentModule.id]);
-  const title = locale === "bn" ? currentModule.titleBn : currentModule.titleEn;
-  const description =
-    locale === "bn" ? currentModule.descriptionBn : currentModule.descriptionEn;
+  const title = localizedText(locale, currentModule.titleBn, currentModule.titleEn);
+  const description = localizedText(locale, currentModule.descriptionBn, currentModule.descriptionEn);
   const watched = state.watchedModuleIds.has(currentModule.id);
 
   if (!unlocked) {
@@ -177,10 +177,10 @@ export default async function ModulePage({
                   <McqForm
                     moduleSlug={currentModule.slug}
                     stepId={step.id}
-                    prompt={locale === "bn" ? step.promptBn : step.promptEn}
+                    prompt={localizedText(locale, step.promptBn, step.promptEn)}
                     options={options.map((option) => ({
                       id: option.id,
-                      label: locale === "bn" ? option.bn : option.en,
+                      label: localizedText(locale, option.bn, option.en),
                     }))}
                     existingOptionId={progress?.answerOptionId ?? undefined}
                     labels={{
@@ -219,16 +219,17 @@ export default async function ModulePage({
                   key={step.id}
                   moduleSlug={currentModule.slug}
                   stepId={step.id}
-                  prompt={locale === "bn" ? step.promptBn : step.promptEn}
+                  prompt={localizedText(locale, step.promptBn, step.promptEn)}
                   minWords={step.minWords}
                   defaultAnswer={defaultAnswer}
                   labels={{
                     submit: t("submitReflection"),
                     submitting: t("submitting"),
-                    words: t("words"),
-                    minWords: t("minWords"),
+                    words: t("words", { count: "{count}" }),
+                    minWords: t("minWords", { min: "{min}" }),
                     savedNote: t("savedNote"),
-                    hint: t("reflectionHint"),
+                    hint: t("reflectionHint", { min: "{min}" }),
+                    ready: t("ready"),
                   }}
                 />
               );

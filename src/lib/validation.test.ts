@@ -36,6 +36,19 @@ describe("registrationSchema", () => {
     expect(schema.safeParse(validRegistration).success).toBe(true);
   });
 
+  it("normalizes Bangla numerals in Scout ID and phone inputs before validation", () => {
+    const parsed = schema.safeParse({
+      ...validRegistration,
+      scoutId: "BD-১২৩৪৫৬",
+      phone: "+৮৮০ ১৭১২৩৪৫৬৭৮",
+    });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.scoutId).toBe("BD-123456");
+      expect(parsed.data.phone).toBe("+880 1712345678");
+    }
+  });
+
   it("requires guardian consent for a participant under 18", () => {
     const result = schema.safeParse({ ...validRegistration, isMinor: true });
 

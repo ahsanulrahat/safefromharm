@@ -3,6 +3,7 @@
 import { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
+import { localePath } from "@/i18n/locale-path";
 import { prisma } from "@/lib/prisma";
 import { registrationSchema } from "@/lib/validation";
 import { newResumeCode, normalizeEmail, normalizePhone, normalizeScoutId } from "@/lib/ids";
@@ -162,5 +163,5 @@ export async function registerAction(
   }
 
   await setParticipantSession(participantId);
-  redirect(`/${locale}/registered`);
+  redirect(localePath(locale, "/registered"));
 }

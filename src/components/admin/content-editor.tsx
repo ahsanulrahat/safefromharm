@@ -19,17 +19,20 @@ export type ContentEditorLabels = {
   cancel: string;
   validationTitle: string;
   idNote: string;
+  languageGap: string;
 };
 
 export function ContentEditor({
   locale,
   originalSlug,
   initialJson,
+  hasLanguageGap,
   labels,
 }: {
   locale: AppLocale;
   originalSlug: string;
   initialJson: string;
+  hasLanguageGap: boolean;
   labels: ContentEditorLabels;
 }) {
   const [state, action, pending] = useActionState(saveModuleAction, initialState);
@@ -67,6 +70,12 @@ export function ContentEditor({
             ))}
           </ul>
         </div>
+      )}
+
+      {hasLanguageGap && (
+        <p role="status" className="mb-3 rounded-lg border border-gold-300 bg-gold-50 px-3 py-2 text-sm font-semibold text-gold-900">
+          {labels.languageGap}
+        </p>
       )}
 
       <label className="text-sm font-semibold text-brand-900" htmlFor="module-json">

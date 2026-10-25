@@ -1,6 +1,7 @@
 import type { AdminRole } from "@prisma/client";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { localePath } from "@/i18n/locale-path";
 import type { AdminSessionUser } from "@/lib/roles";
 
 /**
@@ -20,9 +21,9 @@ export async function getAdmin(): Promise<AdminSessionUser | null> {
 
 export async function requireAdmin(locale = "bn", roles?: AdminRole[]) {
   const admin = await getAdmin();
-  if (!admin) redirect(`/${locale}/admin/login`);
+  if (!admin) redirect(localePath(locale, "/admin/login"));
   if (roles && !roles.includes(admin.role)) {
-    redirect(`/${locale}/admin?forbidden=1`);
+    redirect(`${localePath(locale, "/admin")}?forbidden=1`);
   }
   return admin;
 }

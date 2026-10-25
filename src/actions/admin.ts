@@ -3,6 +3,7 @@
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { localePath } from "@/i18n/locale-path";
 import { prisma } from "@/lib/prisma";
 import { requireAdminAction } from "@/lib/admin";
 import { audit } from "@/lib/audit";
@@ -180,7 +181,7 @@ export async function moveModuleAction(formData: FormData) {
   const locale = text(formData, "locale") || "bn";
 
   const existingModule = await prisma.module.findUnique({ where: { slug } });
-  if (!existingModule) redirect(`/${locale}/admin/content`);
+  if (!existingModule) redirect(localePath(locale, "/admin/content"));
 
   const neighbour = await prisma.module.findFirst({
     where: {
@@ -213,7 +214,7 @@ export async function moveModuleAction(formData: FormData) {
 
   revalidatePath("/[locale]/course", "page");
   revalidatePath("/[locale]/admin/content", "page");
-  redirect(`/${locale}/admin/content?module=${slug}`);
+  redirect(`${localePath(locale, "/admin/content")}?module=${encodeURIComponent(slug)}`);
 }
 
 export async function togglePublishAction(formData: FormData) {
@@ -238,7 +239,7 @@ export async function togglePublishAction(formData: FormData) {
 
   revalidatePath("/[locale]/course", "page");
   revalidatePath("/[locale]/admin/content", "page");
-  redirect(`/${locale}/admin/content?module=${slug}`);
+  redirect(`${localePath(locale, "/admin/content")}?module=${encodeURIComponent(slug)}`);
 }
 
 export async function saveSettingsAction(formData: FormData) {
@@ -263,7 +264,7 @@ export async function saveSettingsAction(formData: FormData) {
 
   revalidatePath("/[locale]/admin/content", "page");
   revalidatePath("/[locale]/course", "page");
-  redirect(`/${locale}/admin/content?saved=1`);
+  redirect(`${localePath(locale, "/admin/content")}?saved=1`);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -296,7 +297,7 @@ export async function revokeCertificateAction(formData: FormData) {
   }
 
   revalidatePath("/[locale]/admin/certificates", "page");
-  redirect(`/${locale}/admin/certificates`);
+  redirect(localePath(locale, "/admin/certificates"));
 }
 
 export async function reissueCertificateAction(formData: FormData) {
@@ -318,5 +319,5 @@ export async function reissueCertificateAction(formData: FormData) {
 
   revalidatePath("/[locale]/admin/certificates", "page");
   revalidatePath("/[locale]/certificate", "page");
-  redirect(`/${locale}/admin/certificates`);
+  redirect(localePath(locale, "/admin/certificates"));
 }

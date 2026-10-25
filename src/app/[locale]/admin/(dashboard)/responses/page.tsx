@@ -247,7 +247,7 @@ export default async function ResponsesPage({
       {pages > 1 && (
         <nav
           className="mt-4 flex items-center justify-between gap-3"
-          aria-label="Pagination"
+          aria-label={tc("paginationLabel")}
         >
           {safePage > 1 ? (
             <Link href={pageHref(safePage - 1)} className={buttonClass("secondary")}>

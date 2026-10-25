@@ -242,7 +242,7 @@ export default async function CertificatesPage({
       {result.pages > 1 && (
         <nav
           className="mt-3 flex items-center justify-between gap-3"
-          aria-label="Pagination"
+          aria-label={tc("paginationLabel")}
         >
           {result.page > 1 ? (
             <Link

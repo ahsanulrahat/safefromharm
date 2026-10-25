@@ -2,6 +2,7 @@
 
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
+import { localePath } from "@/i18n/locale-path";
 import { prisma } from "@/lib/prisma";
 import { normalizeEmail, normalizePhone, normalizeScoutId } from "@/lib/ids";
 import { resumeWithCodeSchema, resumeWithIdSchema } from "@/lib/validation";
@@ -47,7 +48,7 @@ export async function resumeWithCodeAction(
   if (!participant) return { error: t("notFound") };
 
   await setParticipantSession(participant.id);
-  redirect(`/${locale}/course`);
+  redirect(localePath(locale, "/course"));
 }
 
 export async function resumeWithIdAction(
@@ -84,11 +85,11 @@ export async function resumeWithIdAction(
   if (!participant) return { error: t("notFound") };
 
   await setParticipantSession(participant.id);
-  redirect(`/${locale}/course`);
+  redirect(localePath(locale, "/course"));
 }
 
 export async function signOutParticipantAction(formData: FormData) {
   const locale = text(formData, "locale") === "en" ? "en" : "bn";
   await clearParticipantSession();
-  redirect(`/${locale}`);
+  redirect(localePath(locale, "/"));
 }

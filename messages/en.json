@@ -34,7 +34,19 @@
     "themeLight": "Light mode",
     "themeDark": "Dark mode",
     "menuOpen": "Open menu",
-    "menuClose": "Close menu"
+    "menuClose": "Close menu",
+    "themeSystem": "Follow device setting",
+    "mainNav": "Main navigation",
+    "mobileNav": "Mobile navigation",
+    "website": "Website",
+    "adminPortal": "Admin portal",
+    "eventLine": "Scout Moot 2026 · Dhaka",
+    "pagination": "Pagination",
+    "errorCode": "500",
+    "errorTitle": "This page could not be loaded",
+    "errorDescription": "A temporary problem occurred. Try again or return to the home page.",
+    "tryAgain": "Try again",
+    "backHome": "Back to home"
   },
   "validation": {
     "fullNameBn": "Please enter your full name in Bangla (at least 2 characters).",
@@ -217,6 +229,7 @@
     "words": "{count} words",
     "minWords": "At least {min} words",
     "submitReflection": "Save reflection",
+    "ready": "Ready",
     "saved": "Saved",
     "savedNote": "Your reflection has been saved.",
     "completeTitle": "Module complete!",
@@ -286,7 +299,8 @@
       "responses": "Reflection answers",
       "audit": "Audit log",
       "logout": "Sign out",
-      "site": "View site"
+      "site": "View site",
+      "navLabel": "Administrator navigation"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -333,7 +347,8 @@
       "saved": "Changes saved.",
       "sensitive": "Sensitive data — authorized staff only",
       "filter": "Filter",
-      "back": "Back"
+      "back": "Back",
+      "paginationLabel": "Pagination"
     },
     "participants": {
       "title": "Participants",
@@ -343,7 +358,7 @@
       "districtUnit": "District / unit",
       "memberType": "Member type",
       "section": "Member type",
-      "allSections": "All member types",
+      "allSections": "All sections",
       "registered": "Registered",
       "progress": "Modules",
       "certificate": "Certificate",
@@ -352,7 +367,6 @@
       "none": "None",
       "empty": "No participants match these filters.",
       "exportHint": "CSV export includes contact details but never reflection answers.",
-      "allSections": "All sections",
       "allDistricts": "All districts",
       "certStatus": "Certificate",
       "certActive": "Active certificate",
@@ -457,7 +471,8 @@
       "templateNote": "The new-module template includes one MCQ and one reflection step.",
       "idNote": "Leave step id empty for new steps. Keep existing ids so participant progress is preserved.",
       "formatError": "The document is not valid JSON.",
-      "participantsCount": "participants"
+      "participantsCount": "participants",
+      "languageGap": "A translation is missing. Add both Bangla and English text before publishing this content."
     },
     "responses": {
       "title": "Reflection answers",

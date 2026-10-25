@@ -18,6 +18,9 @@ export function formatDateTime(date: Date, locale: string) {
   }).format(date);
 }
 
-export function formatPercent(value: number) {
-  return `${Math.round(value * 100)}%`;
+export function formatPercent(value: number, locale: string = "en") {
+  return new Intl.NumberFormat(locale === "bn" ? "bn-BD" : "en-GB", {
+    style: "percent",
+    maximumFractionDigits: 0,
+  }).format(value);
 }

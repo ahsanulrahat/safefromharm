@@ -28,7 +28,6 @@ export function SiteHeader({ locale }: { locale: AppLocale }) {
         <Link
           href="/"
           className="group flex min-w-0 items-center gap-2.5 text-brand-950 dark:text-brand-50 transition-colors"
-          aria-label={`${t("brand")} — ${t("course")}`}
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-600 via-brand-700 to-brand-800 text-white shadow-xs transition-transform duration-200 group-hover:scale-105">
             <CompassMark className="h-6 w-6" />
@@ -45,7 +44,7 @@ export function SiteHeader({ locale }: { locale: AppLocale }) {
 
         {/* Desktop Navigation */}
         <nav
-          aria-label="Main"
+          aria-label={t("mainNav")}
           className="hidden items-center gap-1 lg:flex"
         >
           {navLinks.map((item) => (
@@ -60,7 +59,7 @@ export function SiteHeader({ locale }: { locale: AppLocale }) {
         </nav>
 
         {/* Right Controls: Theme, Language, Actions & Mobile Toggle */}
-        <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-2.5" data-locale-controls>
           {/* Theme Toggle */}
           <ThemeToggle />
 
@@ -122,7 +121,7 @@ export function SiteHeader({ locale }: { locale: AppLocale }) {
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
         <div className="border-b border-brand-100 bg-white/95 px-4 pt-2 pb-5 shadow-lg backdrop-blur-xl lg:hidden dark:border-brand-900 dark:bg-brand-950/95 animate-fade-in-up">
-          <nav aria-label="Mobile Navigation" className="flex flex-col gap-1">
+          <nav aria-label={t("mobileNav")} className="flex flex-col gap-1">
             {navLinks.map((item) => (
               <Link
                 key={item.href}

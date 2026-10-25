@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizeDigits } from "@/lib/ids";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const phonePattern = /^\+?[\d\s()-]{6,20}$/;
@@ -31,15 +32,14 @@ export function registrationSchema(m: RegistrationMessages) {
         .regex(nameEnPattern, m.nameEnLatin),
       scoutId: z
         .string()
-        .trim()
-        .toUpperCase()
-        .regex(/^[A-Z0-9-]{4,30}$/, m.scoutId),
+        .transform((value) => normalizeDigits(value).trim().toUpperCase())
+        .pipe(z.string().regex(/^[A-Z0-9-]{4,30}$/, m.scoutId)),
       unit: z.string().trim().min(2, m.unit).max(120),
       district: z.string().trim().min(2, m.district).max(120),
       memberType: z.enum(["ROVER", "LEADER"], {
         error: m.memberType,
       }),
-      phone: z.string().trim().regex(phonePattern, m.phone).optional(),
+      phone: z.string().transform((value) => normalizeDigits(value).trim()).pipe(z.string().regex(phonePattern, m.phone)).optional(),
       email: z.string().trim().regex(emailPattern, m.email).optional(),
       isMinor: z.boolean().default(false),
       guardianConsent: z.boolean().default(false),
@@ -75,8 +75,8 @@ export function resumeWithCodeSchema(m: ResumeMessages) {
 
 export function resumeWithIdSchema(m: ResumeMessages) {
   return z.object({
-    scoutId: z.string().trim().min(1, m.needIdentifier).max(30),
-    contact: z.string().trim().min(3, m.needIdentifier).max(120),
+    scoutId: z.string().transform((value) => normalizeDigits(value).trim()).pipe(z.string().min(1, m.needIdentifier).max(30)),
+    contact: z.string().transform((value) => normalizeDigits(value).trim()).pipe(z.string().min(3, m.needIdentifier).max(120)),
   });
 }
 
