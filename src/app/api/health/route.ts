@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { safeErrorDetails } from "@/lib/safe-log";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ export async function GET() {
       { headers: { "Cache-Control": "no-store" } }
     );
   } catch (error) {
-    console.error("Health check failed", error);
+    console.error("Health check failed", safeErrorDetails(error));
     return NextResponse.json(
       { status: "error", database: "unavailable" },
       { status: 503, headers: { "Cache-Control": "no-store" } }

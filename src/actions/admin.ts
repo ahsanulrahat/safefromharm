@@ -8,6 +8,7 @@ import { requireAdminAction } from "@/lib/admin";
 import { audit } from "@/lib/audit";
 import { contentModuleSchema } from "@/lib/validation";
 import { reissueCertificate } from "@/lib/certificates";
+import { safeErrorDetails } from "@/lib/safe-log";
 
 export type ContentState = { error?: string; fieldErrors?: string[] };
 
@@ -167,7 +168,7 @@ export async function saveModuleAction(
     ) {
       throw error;
     }
-    console.error("saveModule failed", error);
+    console.error("saveModule failed", safeErrorDetails(error));
     return { error: "Could not save the module. Please try again." };
   }
 }

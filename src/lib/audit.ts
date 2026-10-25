@@ -1,5 +1,6 @@
 import type { AdminRole } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { safeErrorDetails } from "@/lib/safe-log";
 
 /** Append-only record of sensitive admin access and mutations. */
 export async function audit(input: {
@@ -13,6 +14,6 @@ export async function audit(input: {
     await prisma.auditLog.create({ data: input });
   } catch (error) {
     // Auditing must never take down an admin page, but log loudly.
-    console.error("Failed to write audit log", error);
+    console.error("Failed to write audit log", safeErrorDetails(error));
   }
 }
