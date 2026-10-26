@@ -22,7 +22,7 @@ for (const scenario of scenarios) {
     const scoutId = `QA26-${scenario.audience}-${stamp}`;
     createdScoutIds.add(scoutId);
     const phone = `+8801${stamp.slice(-9).padStart(9, "0")}`;
-    const prefix = scenario.locale === "en" ? "/en" : "";
+    const prefix = scenario.locale === "bn" ? "/bn" : "";
     const messages = scenario.locale === "en" ? en : bn;
 
     await page.addInitScript((preference) => localStorage.setItem("scout_theme", preference), scenario.theme);

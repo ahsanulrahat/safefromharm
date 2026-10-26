@@ -50,7 +50,7 @@ export async function getAdmin(): Promise<AdminSessionUser | null> {
 
 /** Page gate. Authorization always uses the current role from the database. */
 export async function requireAdmin(
-  locale = "bn",
+  locale = "en",
   permission?: AdminPermission,
   options: { allowMustChangePassword?: boolean } = {}
 ) {

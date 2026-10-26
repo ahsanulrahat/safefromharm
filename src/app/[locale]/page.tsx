@@ -78,8 +78,8 @@ export default async function HomePage() {
                 {/* Accent stripe at top */}
                 <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-brand-600 via-accent-500 to-gold-400" />
                 <div className="flex items-center gap-3 pt-2">
-                  <span className="rounded-xl bg-gradient-to-br from-brand-50 to-brand-100 p-2.5 text-brand-700 dark:from-brand-900/60 dark:to-brand-800/60 dark:text-brand-300">
-                    <CompassMark className="h-8 w-8" />
+                  <span className="rounded-xl bg-gradient-to-br from-brand-50 to-brand-100 p-2 text-brand-700 dark:from-brand-900/60 dark:to-brand-800/60 dark:text-brand-300">
+                    <CompassMark className="h-6 w-6" />
                   </span>
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wider text-gold-700 dark:text-gold-400">

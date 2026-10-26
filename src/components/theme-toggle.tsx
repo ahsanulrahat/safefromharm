@@ -18,11 +18,11 @@ function subscribe(callback: () => void) {
 }
 
 function getSnapshot() {
-  return `${document.documentElement.dataset.themePreference ?? "system"}:${document.documentElement.classList.contains("dark")}`;
+  return `${document.documentElement.dataset.themePreference ?? "light"}:${document.documentElement.classList.contains("dark")}`;
 }
 
 function getServerSnapshot() {
-  return "system:false";
+  return "light:false";
 }
 
 function setPreference(theme: ThemePreference) {

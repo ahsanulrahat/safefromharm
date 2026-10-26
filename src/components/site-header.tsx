@@ -29,8 +29,8 @@ export function SiteHeader({ locale }: { locale: AppLocale }) {
           href="/"
           className="group flex min-w-0 items-center gap-2.5 text-brand-950 dark:text-brand-50 transition-colors"
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-600 via-brand-700 to-brand-800 text-white shadow-xs transition-transform duration-200 group-hover:scale-105">
-            <CompassMark className="h-6 w-6" />
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-600 via-brand-700 to-brand-800 text-white shadow-xs transition-transform duration-200 group-hover:scale-105">
+            <CompassMark className="h-5 w-5" />
           </span>
           <span className="min-w-0 leading-tight">
             <span className="block truncate text-sm font-black tracking-tight sm:text-base">

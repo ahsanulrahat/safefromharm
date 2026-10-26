@@ -15,7 +15,7 @@ export async function loginAction(
   _prev: LoginState,
   formData: FormData
 ): Promise<LoginState> {
-  const locale = String(formData.get("locale") ?? "bn") === "en" ? "en" : "bn";
+  const locale = String(formData.get("locale") ?? "en") === "bn" ? "bn" : "en";
   const loginId = String(formData.get("loginId") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const redirectTo = safeAdminCallback(locale, formData.get("callbackUrl"));
@@ -39,7 +39,7 @@ export async function loginAction(
 }
 
 export async function logoutAction(formData: FormData) {
-  const locale = String(formData.get("locale") ?? "bn") === "en" ? "en" : "bn";
+  const locale = String(formData.get("locale") ?? "en") === "bn" ? "bn" : "en";
   const admin = await getAdmin();
   if (admin) {
     const revokedAt = new Date();

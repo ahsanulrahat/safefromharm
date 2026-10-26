@@ -14,7 +14,7 @@ test("seeded SUPERADMIN first login, account access and admin session revocation
     throw new Error("Provide isolated Preview admin audit values.");
   }
 
-  await page.goto("/en/admin/login");
+  await page.goto("/admin/login");
   await page.locator('[name="loginId"]').fill(email);
   await page.locator('[name="password"]').fill(password);
   await page.getByRole("button", { name: en.admin.login.submit }).click();
@@ -38,14 +38,14 @@ test("seeded SUPERADMIN first login, account access and admin session revocation
     .first();
   await expect(participantStat.locator("p").nth(1)).toHaveText(String(expectedParticipants));
 
-  await page.goto("/en/admin/account");
+  await page.goto("/admin/account");
   await expect(page.getByRole("heading", { name: en.admin.account.title })).toBeVisible();
   await expect(page.locator('input[name="name"]')).toBeVisible();
   await expect(page.locator('input[name="loginId"]')).toBeVisible();
   await expect(page.locator('input[name="email"]')).toBeVisible();
   await expect(page.getByText(en.admin.account.sessions)).toBeVisible();
 
-  await page.goto("/en/admin/admins");
+  await page.goto("/admin/admins");
   const createForm = page.locator("form").filter({ has: page.locator('select[name="role"]') }).first();
   await createForm.locator('[name="name"]').fill("QA Reporting Admin");
   await createForm.locator('[name="loginId"]').fill(childLogin);
@@ -63,7 +63,7 @@ test("seeded SUPERADMIN first login, account access and admin session revocation
   const childContext = await browser.newContext();
   try {
     const childPage = await childContext.newPage();
-    await childPage.goto("/en/admin/login");
+    await childPage.goto("/admin/login");
     await childPage.locator('[name="loginId"]').fill(childLogin);
     await childPage.locator('[name="password"]').fill(temporaryPassword);
     await childPage.getByRole("button", { name: en.admin.login.submit }).click();
@@ -80,7 +80,7 @@ test("seeded SUPERADMIN first login, account access and admin session revocation
     await childPage.locator('[name="password"]').fill(childNewPassword);
     await childPage.getByRole("button", { name: en.admin.login.submit }).click();
     await expect(childPage).toHaveURL(/\/en\/admin$/);
-    await childPage.goto("/en/admin/participants");
+    await childPage.goto("/admin/participants");
     await expect(childPage).toHaveURL(/\/en\/admin\/access-denied$/);
 
     const exportResponse = await childContext.request.get("http://127.0.0.1:3001/api/admin/export");
@@ -96,7 +96,7 @@ test("seeded SUPERADMIN first login, account access and admin session revocation
     page.once("dialog", (dialog) => dialog.accept());
     await disableForm.getByRole("button", { name: en.admin.admins.disable }).click();
     await expect(childCard.getByText(en.admin.admins.disabled)).toBeVisible();
-    await childPage.goto("/en/admin");
+    await childPage.goto("/admin");
     await expect(childPage).toHaveURL(/\/en\/admin\/login/);
   } finally {
     await childContext.close();

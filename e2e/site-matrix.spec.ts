@@ -11,7 +11,7 @@ const routes = [
 ];
 
 for (const locale of ["bn", "en"] as const) {
-  const prefix = locale === "bn" ? "" : "/en";
+  const prefix = locale === "bn" ? "/bn" : "";
   for (const theme of ["light", "dark"] as const) {
     for (const route of routes) {
       test(`${locale}/${theme} ${route} loads accessibly with persistent controls`, async ({ page }) => {
@@ -64,7 +64,7 @@ test("language switching preserves current route and query; theme persists", asy
 
 for (const locale of ["bn", "en"] as const) {
   test(`unauthorized admin dashboard redirects to localized login (${locale})`, async ({ page }) => {
-    await page.goto(`${locale === "bn" ? "" : "/en"}/admin/participants`);
+    await page.goto(`${locale === "bn" ? "/bn" : ""}/admin/participants`);
     await expect(page).toHaveURL(/\/admin\/login/);
     await expect(page.getByRole("button", { name: "English" })).toBeVisible();
   });

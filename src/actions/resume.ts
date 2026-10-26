@@ -28,7 +28,7 @@ export async function resumeWithCodeAction(
   _prev: ResumeState,
   formData: FormData
 ): Promise<ResumeState> {
-  const locale = text(formData, "locale") === "en" ? "en" : "bn";
+  const locale = text(formData, "locale") === "bn" ? "bn" : "en";
   const { t, limited } = await guard(locale);
   if (!limited.success) return { error: t("rateLimited") };
 
@@ -55,7 +55,7 @@ export async function resumeWithIdAction(
   _prev: ResumeState,
   formData: FormData
 ): Promise<ResumeState> {
-  const locale = text(formData, "locale") === "en" ? "en" : "bn";
+  const locale = text(formData, "locale") === "bn" ? "bn" : "en";
   const { t, limited } = await guard(locale);
   if (!limited.success) return { error: t("rateLimited") };
 
@@ -89,7 +89,7 @@ export async function resumeWithIdAction(
 }
 
 export async function signOutParticipantAction(formData: FormData) {
-  const locale = text(formData, "locale") === "en" ? "en" : "bn";
+  const locale = text(formData, "locale") === "bn" ? "bn" : "en";
   await clearParticipantSession();
   redirect(localePath(locale, "/"));
 }

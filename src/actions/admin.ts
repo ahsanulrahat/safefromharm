@@ -120,7 +120,7 @@ export async function saveModuleAction(
     }, { timeout: 15_000, isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 
     revalidatePath("/[locale]/admin/content", "page");
-    const locale = text(formData, "locale") === "en" ? "en" : "bn";
+    const locale = text(formData, "locale") === "bn" ? "bn" : "en";
     redirect(`${localePath(locale, "/admin/content")}?module=${encodeURIComponent(savedModule.slug)}&saved=1`);
   } catch (error) {
     if (error instanceof Error && error.message === "DUPLICATE_SLUG") {
@@ -153,7 +153,7 @@ export async function saveModuleAction(
 /** Publish a draft or restore an older published snapshot as a new version. */
 export async function publishModuleVersionAction(formData: FormData) {
   const admin = await requireAdminAction("content:write");
-  const locale = text(formData, "locale") === "en" ? "en" : "bn";
+  const locale = text(formData, "locale") === "bn" ? "bn" : "en";
   const versionId = text(formData, "versionId").trim();
   const mode = text(formData, "mode") === "rollback" ? "rollback" : "publish";
   const password = formData.get("currentPassword");
@@ -338,7 +338,7 @@ export async function moveModuleAction(formData: FormData) {
   const admin = await requireAdminAction("content:write");
   const slug = text(formData, "slug");
   const direction = text(formData, "direction") === "up" ? "up" : "down";
-  const locale = text(formData, "locale") || "bn";
+  const locale = text(formData, "locale") || "en";
 
   const existingModule = await prisma.module.findUnique({ where: { slug } });
   if (!existingModule) redirect(localePath(locale, "/admin/content"));
@@ -380,7 +380,7 @@ export async function moveModuleAction(formData: FormData) {
 
 export async function saveSettingsAction(formData: FormData) {
   const admin = await requireAdminAction("settings:write");
-  const locale = text(formData, "locale") || "bn";
+  const locale = text(formData, "locale") || "en";
   const password = formData.get("currentPassword");
   const reauthLimit = await rateLimit(`admin-reauth:${admin.id}`, 8, 10 * 60_000);
   const passwordRow = await prisma.adminUser.findUnique({ where: { id: admin.id }, select: { passwordHash: true } });
@@ -463,7 +463,7 @@ export async function saveSettingsAction(formData: FormData) {
 export async function revokeCertificateAction(formData: FormData) {
   const admin = await requireAdminAction("certificates:write");
   const id = text(formData, "id").toUpperCase();
-  const locale = text(formData, "locale") || "bn";
+  const locale = text(formData, "locale") || "en";
   const reason = text(formData, "reason").trim() || "Revoked by organizer";
 
   const certificate = await prisma.certificate.findUnique({ where: { id } });
@@ -492,7 +492,7 @@ export async function revokeCertificateAction(formData: FormData) {
 export async function reissueCertificateAction(formData: FormData) {
   const admin = await requireAdminAction("certificates:write");
   const id = text(formData, "id").toUpperCase();
-  const locale = text(formData, "locale") || "bn";
+  const locale = text(formData, "locale") || "en";
 
   const certificate = await prisma.certificate.findUnique({ where: { id } });
   if (certificate) {

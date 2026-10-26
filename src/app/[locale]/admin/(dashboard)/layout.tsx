@@ -46,7 +46,7 @@ export default async function AdminProtectedLayout({
           <div className="flex h-16 items-center justify-between gap-3">
             <Link href={homeHref} className="group flex items-center gap-2.5 font-bold">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-brand-800 to-brand-700 text-gold-300 shadow-2xs">
-                <CompassMark className="h-6 w-6" />
+                <CompassMark className="h-5 w-5" />
               </span>
               <span className="leading-tight">
                 <span className="block text-sm font-black tracking-tight">{tc("brand")}</span>

@@ -28,7 +28,7 @@ export async function registerAction(
   _prev: RegisterState,
   formData: FormData
 ): Promise<RegisterState> {
-  const locale = text(formData, "locale") === "en" ? "en" : "bn";
+  const locale = text(formData, "locale") === "bn" ? "bn" : "en";
   const t = await getTranslations({ locale, namespace: "validation" });
 
   const ip = await getClientIp();

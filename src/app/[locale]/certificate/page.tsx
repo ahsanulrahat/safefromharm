@@ -85,8 +85,8 @@ export default async function CertificatePage({
         <div className="relative border-b-2 border-gold-300 dark:border-gold-700 bg-gradient-to-br from-brand-950 via-brand-900 to-brand-950 px-6 py-7 text-center text-white">
           <div className="pointer-events-none absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
           <div className="relative flex flex-col items-center">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-gold-300 backdrop-blur-sm">
-              <CompassMark className="h-6 w-6" />
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-gold-300 backdrop-blur-sm">
+              <CompassMark className="h-5 w-5" />
             </span>
             <p className="mt-3 text-xs font-bold uppercase tracking-[0.25em] text-gold-300">
               {tc("eventLine")}

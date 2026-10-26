@@ -15,7 +15,7 @@ export async function GET(
 ) {
   const { code } = await params;
   const url = new URL(request.url);
-  const locale = url.searchParams.get("l") === "en" ? "en" : "bn";
+  const locale = url.searchParams.get("l") === "bn" ? "bn" : "en";
 
   const limited = await rateLimit(
     `resume-link:${ipFromRequest(request)}`,

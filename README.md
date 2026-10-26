@@ -19,7 +19,7 @@ Built with Next.js App Router, TypeScript, Tailwind CSS, Prisma, PostgreSQL
 - Register without a password using Scout ID plus phone or email.
 - Duplicate registration blocked by Scout ID and phone (database constraints).
 - Guardian consent required for participants under 18.
-- Bangla (default) and English, with Noto Sans Bengali.
+- English (default) and Bangla (`/bn`), with Noto Sans Bengali.
 - Resume with a code, resume link, or Scout ID + phone/email.
 - DB-driven modules: YouTube video, MCQ steps, and free-text reflections.
 - Video unlocks steps after playback ends, with an accessible "I watched it"
@@ -115,7 +115,7 @@ values and a seeded `SUPERADMIN` account with a forced first password change.
 
 ## Content management
 
-1. Open the organizer dashboard at `/bn/organizer` (or `/bn/admin`), then sign
+1. Open the organizer dashboard at `/organizer` (or `/admin`), then sign
    in with `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
 2. Open **Content** and select a module (or create a new one).
 3. Edit the JSON and save. The schema is validated server-side before writing.

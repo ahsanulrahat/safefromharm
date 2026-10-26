@@ -29,7 +29,7 @@ function secretField(formData: FormData, key: string) {
 }
 
 function localeOf(formData: FormData) {
-  return field(formData, "locale") === "en" ? "en" : "bn";
+  return field(formData, "locale") === "bn" ? "bn" : "en";
 }
 
 function validLoginId(value: string) {

@@ -81,7 +81,7 @@ export default async function LocaleLayout({
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var r=document.documentElement,t=localStorage.getItem("scout_theme")||"system";r.dataset.themePreference=t;var d=t==="dark"||(t==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);r.classList.toggle("dark",d)}catch(e){}})();`,
+            __html: `(function(){try{var r=document.documentElement,t=localStorage.getItem("scout_theme")||"light";r.dataset.themePreference=t;var d=t==="dark"||(t==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);r.classList.toggle("dark",d)}catch(e){}})();`,
           }}
         />
       </head>

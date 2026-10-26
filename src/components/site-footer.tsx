@@ -13,8 +13,8 @@ export async function SiteFooter() {
         <div className="mt-8 grid gap-6 text-sm text-muted dark:text-brand-300 sm:grid-cols-3">
           <div>
             <div className="flex items-center gap-2.5 font-bold text-brand-950 dark:text-brand-50">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 text-white shadow-xs">
-                <CompassMark className="h-5 w-5" />
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 text-white shadow-xs">
+                <CompassMark className="h-4 w-4" />
               </span>
               {t("brand")}
             </div>

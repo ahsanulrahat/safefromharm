@@ -1,6 +1,6 @@
 # Admin guide
 
-Open the organizer console at `/bn/admin/login` or `/en/admin/login`. Sign in with the email or login ID and password already assigned to your account. Do not share credentials.
+Open the organizer console at `/admin/login` (English) or `/bn/admin/login` (Bangla). Sign in with the email or login ID and password already assigned to your account. Do not share credentials.
 
 ## My account
 

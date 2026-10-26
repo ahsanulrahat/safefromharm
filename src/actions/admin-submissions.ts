@@ -18,7 +18,7 @@ export async function reviewWrittenSubmissionAction(formData: FormData) {
   const id = field(formData, "submissionId");
   const decision = field(formData, "decision");
   const comment = field(formData, "comment").slice(0, 2_000);
-  const locale = field(formData, "locale") === "en" ? "en" : "bn";
+  const locale = field(formData, "locale") === "bn" ? "bn" : "en";
   const moduleSlug = field(formData, "moduleSlug").slice(0, 80);
   const participantId = field(formData, "participantId").slice(0, 40);
 

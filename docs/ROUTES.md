@@ -1,23 +1,23 @@
 # Route inventory
 
-Bangla is the default locale and uses the unprefixed canonical paths. English uses the same paths under `/en`. Both locale families are served by the single `[locale]` App Router tree.
+English is the default locale and uses the unprefixed canonical paths. Bangla uses the same paths under `/bn`. Both locale families are served by the single `[locale]` App Router tree.
 
 ## Public pages
 
-| Bangla (default) | English |
+| English (default) | Bangla |
 | --- | --- |
-| `/` | `/en` |
-| `/register` | `/en/register` |
-| `/registered` | `/en/registered` |
-| `/resume` | `/en/resume` |
-| `/course` | `/en/course` |
-| `/course/[moduleSlug]` | `/en/course/[moduleSlug]` |
-| `/certificate` | `/en/certificate` |
-| `/verify` | `/en/verify` |
-| `/verify/[certId]` | `/en/verify/[certId]` |
-| `/organizer/login` | `/en/organizer/login` |
-| `/organizer` | `/en/organizer` |
-| `/control-center` | `/en/control-center` |
+| `/` | `/bn` |
+| `/register` | `/bn/register` |
+| `/registered` | `/bn/registered` |
+| `/resume` | `/bn/resume` |
+| `/course` | `/bn/course` |
+| `/course/[moduleSlug]` | `/bn/course/[moduleSlug]` |
+| `/certificate` | `/bn/certificate` |
+| `/verify` | `/bn/verify` |
+| `/verify/[certId]` | `/bn/verify/[certId]` |
+| `/organizer/login` | `/bn/organizer/login` |
+| `/organizer` | `/bn/organizer` |
+| `/control-center` | `/bn/control-center` |
 
 `/organizer/login` is an alias for the administrator login. `/organizer` opens the organizer dashboard entry, and `/control-center` is retained as a legacy dashboard alias.
 
@@ -25,20 +25,20 @@ Bangla is the default locale and uses the unprefixed canonical paths. English us
 
 These paths require an authenticated administrator and redirect unauthenticated visitors to the localized login page.
 
-| Bangla (default) | English |
+| English (default) | Bangla |
 | --- | --- |
-| `/admin/login` | `/en/admin/login` |
-| `/admin/first-login-password` | `/en/admin/first-login-password` |
-| `/admin/access-denied` | `/en/admin/access-denied` |
-| `/admin` | `/en/admin` |
-| `/admin/account` | `/en/admin/account` |
-| `/admin/admins` | `/en/admin/admins` |
-| `/admin/participants` | `/en/admin/participants` |
-| `/admin/participants/[id]` | `/en/admin/participants/[id]` |
-| `/admin/certificates` | `/en/admin/certificates` |
-| `/admin/content` | `/en/admin/content` |
-| `/admin/responses` | `/en/admin/responses` |
-| `/admin/audit` | `/en/admin/audit` |
+| `/admin/login` | `/bn/admin/login` |
+| `/admin/first-login-password` | `/bn/admin/first-login-password` |
+| `/admin/access-denied` | `/bn/admin/access-denied` |
+| `/admin` | `/bn/admin` |
+| `/admin/account` | `/bn/admin/account` |
+| `/admin/admins` | `/bn/admin/admins` |
+| `/admin/participants` | `/bn/admin/participants` |
+| `/admin/participants/[id]` | `/bn/admin/participants/[id]` |
+| `/admin/certificates` | `/bn/admin/certificates` |
+| `/admin/content` | `/bn/admin/content` |
+| `/admin/responses` | `/bn/admin/responses` |
+| `/admin/audit` | `/bn/admin/audit` |
 
 ## API and framework routes
 
