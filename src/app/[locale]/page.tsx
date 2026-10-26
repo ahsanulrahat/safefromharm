@@ -1,10 +1,11 @@
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getOptionalParticipant } from "@/lib/participant";
-import { getPublicStats } from "@/lib/public-stats";
 import { CheckIcon, ShieldIcon, CompassMark } from "@/components/icons";
 import { buttonClass, cardClass } from "@/components/ui";
 import { FaqAccordion } from "@/components/faq-accordion";
+import { PublicStats, PublicStatsLoading } from "@/components/public-stats";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,6 @@ export default async function HomePage() {
   const participant = await getOptionalParticipant();
   const t = await getTranslations("home");
   const tc = await getTranslations("common");
-  const stats = await getPublicStats();
 
   const faqItems = [
     { question: t("faq1Q"), answer: t("faq1A") },
@@ -139,38 +139,13 @@ export default async function HomePage() {
       </section>
 
       {/* Live Participation Statistics */}
-      {stats.totalParticipants > 0 && (
-        <section className="border-y border-brand-100 bg-gradient-to-r from-brand-900 via-brand-800 to-brand-900 shadow-inner dark:border-brand-900">
-          <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6 sm:py-9">
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="animate-fade-in-up stagger-1">
-                <p className="text-3xl font-black tabular-nums text-white sm:text-5xl">
-                  {stats.totalParticipants.toLocaleString()}
-                </p>
-                <p className="mt-1 text-xs font-bold uppercase tracking-wider text-brand-200 sm:text-sm">
-                  {t("statParticipants")}
-                </p>
-              </div>
-              <div className="animate-fade-in-up stagger-2">
-                <p className="text-3xl font-black tabular-nums text-white sm:text-5xl">
-                  {stats.totalCertificates.toLocaleString()}
-                </p>
-                <p className="mt-1 text-xs font-bold uppercase tracking-wider text-brand-200 sm:text-sm">
-                  {t("statCertificates")}
-                </p>
-              </div>
-              <div className="animate-fade-in-up stagger-3">
-                <p className="text-3xl font-black tabular-nums text-white sm:text-5xl">
-                  {stats.totalModules.toLocaleString()}
-                </p>
-                <p className="mt-1 text-xs font-bold uppercase tracking-wider text-brand-200 sm:text-sm">
-                  {t("statModules")}
-                </p>
-              </div>
-            </div>
+      <section className="border-y border-brand-100 bg-gradient-to-r from-brand-900 via-brand-800 to-brand-900 shadow-inner dark:border-brand-900">
+        <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6 sm:py-9">
+          <Suspense fallback={<PublicStatsLoading label={t("statsLoading")} />}>
+            <PublicStats />
+          </Suspense>
           </div>
-        </section>
-      )}
+      </section>
 
       {/* About Section: What you will learn */}
       <section id="about" className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 scroll-mt-20">

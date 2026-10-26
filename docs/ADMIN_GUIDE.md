@@ -16,12 +16,22 @@ SUPERADMIN can open **Admin accounts** to create an account, assign a role, edit
 
 - **Dashboard** shows registration, completion and certificate aggregates.
 - **Participants** supports filtering, pagination, progress review and role-limited CSV export. Reporting admins receive monthly aggregates only; safeguarding staff and SUPERADMIN can export the participant roster.
-- **Reflection answers** is restricted to SUPERADMIN and SAFEGUARDING_REVIEWER; each visit is recorded in the audit log.
+- **Reflection answers** is restricted to SUPERADMIN and SAFEGUARDING_REVIEWER; each visit and written-submission decision is recorded in the audit log. Reviewers can approve an answer or request a revision with a comment.
 - **Certificates** supports existing certificate operations for authorized roles.
-- **Content** currently edits published module JSON directly. The draft/publish/version workflow is planned for the next CMS milestone and is not available yet.
+- **Content** edits Rover and Leader modules independently in Bangla and English. Save a draft to keep changes private, inspect the YouTube preview and track preview, then publish from version history. Publishing and rollback require the current admin password. An older published snapshot is restored as a new published version; history is retained.
 - **Audit log** is read-only and SUPERADMIN-only.
 
 All organizer screens include the Bangla/English controls. Use the existing theme control in the site shell to switch light and dark appearance.
+
+## Learning content
+
+Open **Content**, choose a module, then edit its JSON. The editor accepts a bare YouTube video ID or a YouTube watch, short, embed, or Shorts URL; the server normalizes it to an ID and uses the privacy-enhanced embed. The rich-text `writtenBn` and `writtenEn` fields allow headings, lists, links and HTTPS images; the server sanitizes the markup before storing and rendering it.
+
+Question types are `MCQ` (one answer), `MULTI_SELECT` (several answers), `SCENARIO` (single-choice scenario), `REFLECTION` and `PARAGRAPH`. Each question can include bilingual options, points, word limits and bilingual explanations. Keep step IDs when editing a question that already has participant responses. Removing a question with responses archives the database row; it does not erase the response. Array order controls question order. JSON can be exported from the editor and pasted back in to import.
+
+For each module, `audience` is fixed after creation, `passMark` overrides the global pass mark, `mustWatch` controls whether watching is a completion requirement, and `paragraphApprovalRequired` gates written responses until a reviewer approves them. `attemptsAllowed` is stored in the published module settings; separate multi-attempt history and retake controls are not yet implemented. The structured form builder, CSV question import/export, drag-and-drop question ordering, and per-audience assessment-attempt controls remain follow-up work.
+
+New modules stay unpublished until a draft is published. Existing published content remains visible while drafts are edited. Publishing requires a complete Bangla and English translation and reauthentication. Learners who already started a module stay pinned to the version and effective pass mark they began with; learners who start later receive the latest published version. The editor lists the latest 20 versions; all versions remain stored. A rollback creates a new version from the selected archived snapshot and immediately publishes it.
 
 ## Deployment notes
 

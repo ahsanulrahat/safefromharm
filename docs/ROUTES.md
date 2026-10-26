@@ -28,7 +28,11 @@ These paths require an authenticated administrator and redirect unauthenticated 
 | Bangla (default) | English |
 | --- | --- |
 | `/admin/login` | `/en/admin/login` |
+| `/admin/first-login-password` | `/en/admin/first-login-password` |
+| `/admin/access-denied` | `/en/admin/access-denied` |
 | `/admin` | `/en/admin` |
+| `/admin/account` | `/en/admin/account` |
+| `/admin/admins` | `/en/admin/admins` |
 | `/admin/participants` | `/en/admin/participants` |
 | `/admin/participants/[id]` | `/en/admin/participants/[id]` |
 | `/admin/certificates` | `/en/admin/certificates` |

@@ -3,7 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getParticipantId } from "@/lib/participant-session";
-import { getCourseState, recalcParticipant } from "@/lib/course";
+import {
+  getParticipantModuleContext,
+  isParticipantModuleComplete,
+  persistParticipantModuleCompletion,
+} from "@/lib/course";
+import type { ScoreProgress } from "@/lib/completion";
 import { countWords } from "@/lib/text";
 import { encryptText } from "@/lib/crypto";
 import { safeErrorDetails } from "@/lib/safe-log";
@@ -48,23 +53,42 @@ async function participantAndModule(moduleSlug: string) {
   const participantId = await getParticipantId();
   if (!participantId) throw new Error("Not signed in as a participant");
 
-  const courseModule = await prisma.module.findFirst({
-    where: { slug: moduleSlug, published: true },
-    include: { steps: { orderBy: { order: "asc" } } },
+  const context = await getParticipantModuleContext(participantId, moduleSlug);
+
+  return { participantId, ...context };
+}
+
+async function completeModuleIfEligible(
+  participantId: string,
+  module: Awaited<ReturnType<typeof getParticipantModuleContext>>["module"],
+  videoWatched: boolean,
+  isLastModule: boolean,
+  defaultPassMark: number,
+  progress: ScoreProgress[],
+  changedProgress?: ScoreProgress,
+) {
+  if (isParticipantModuleComplete(module, videoWatched, defaultPassMark, progress, changedProgress)) {
+    await persistParticipantModuleCompletion(participantId, module, isLastModule);
+  }
+}
+
+async function pinModuleVersion(
+  participantId: string,
+  moduleId: string,
+  contentVersionId: string | null,
+) {
+  await prisma.moduleProgress.upsert({
+    where: { participantId_moduleId: { participantId, moduleId } },
+    create: { participantId, moduleId, contentVersionId },
+    update: { contentVersionId },
   });
-  if (!courseModule) throw new Error("Module not found");
-
-  const state = await getCourseState(participantId);
-  if (!state.unlocked[courseModule.id]) throw new Error("Module is locked");
-
-  return { participantId, module: courseModule, state };
 }
 
 export async function markVideoWatchedAction(
   moduleSlug: string
 ): Promise<ProgressState> {
   try {
-    const { participantId, module } = await participantAndModule(moduleSlug);
+    const { participantId, module, isLastModule, defaultPassMark, progress } = await participantAndModule(moduleSlug);
     await prisma.moduleProgress.upsert({
       where: {
         participantId_moduleId: { participantId, moduleId: module.id },
@@ -72,11 +96,12 @@ export async function markVideoWatchedAction(
       create: {
         participantId,
         moduleId: module.id,
+        contentVersionId: module.contentVersionId,
         videoWatchedAt: new Date(),
       },
-      update: { videoWatchedAt: new Date() },
+      update: { videoWatchedAt: new Date(), contentVersionId: module.contentVersionId },
     });
-    await recalcParticipant(participantId);
+    await completeModuleIfEligible(participantId, module, true, isLastModule, defaultPassMark, progress);
     refreshCoursePaths();
     return { ok: true, saved: true };
   } catch (error) {
@@ -101,21 +126,33 @@ export async function submitMcqAction(
 ): Promise<ProgressState> {
   const moduleSlug = String(formData.get("moduleSlug") ?? "");
   const stepId = String(formData.get("stepId") ?? "");
-  const optionId = String(formData.get("optionId") ?? "");
-
-  if (!optionId) return { error: "Choose an answer first." };
+  const singleOptionId = String(formData.get("optionId") ?? "");
+  const multiOptionIds = formData.getAll("optionIds").filter((value): value is string => typeof value === "string");
 
   try {
-    const { participantId, module, state } = await participantAndModule(moduleSlug);
+    const { participantId, module, watched, isLastModule, defaultPassMark, progress } = await participantAndModule(moduleSlug);
     const step = module.steps.find((s) => s.id === stepId);
-    if (!step || step.type !== "MCQ") return { error: "Question not found." };
+    if (!step || !["MCQ", "SCENARIO", "MULTI_SELECT"].includes(step.type)) return { error: "Question not found." };
+
+    const isMultiple = step.type === "MULTI_SELECT";
+    const selectedIds = isMultiple ? [...new Set(multiOptionIds)] : singleOptionId ? [singleOptionId] : [];
+    if (selectedIds.length === 0) return { error: "Choose an answer first." };
 
     const options = parseOptions(step.options);
-    if (!options.some((option) => option.id === optionId)) {
+    if (selectedIds.some((id) => !options.some((option) => option.id === id))) {
       return { error: "That answer is not valid for this question." };
     }
 
-    const isCorrect = step.correctOptionId === optionId;
+    let correctOptionIds: string[] = [];
+    if (step.type === "MULTI_SELECT" && Array.isArray(step.correctOptionIds)) {
+      correctOptionIds = step.correctOptionIds.filter((id): id is string => typeof id === "string");
+    } else if (step.correctOptionId) {
+      correctOptionIds = [step.correctOptionId];
+    }
+    const isCorrect = selectedIds.length === correctOptionIds.length &&
+      selectedIds.every((id) => correctOptionIds.includes(id));
+    const answerJson = isMultiple ? { optionIds: selectedIds } : { optionId: selectedIds[0] };
+    await pinModuleVersion(participantId, module.id, module.contentVersionId);
 
     await prisma.stepProgress.upsert({
       where: {
@@ -125,22 +162,29 @@ export async function submitMcqAction(
         participantId,
         stepId,
         moduleId: module.id,
-        answerJson: { optionId },
+        answerJson,
         isCorrect,
+        contentVersionId: module.contentVersionId,
         completedAt: new Date(),
       },
       update: {
-        answerJson: { optionId },
+        answerJson,
         isCorrect,
+        contentVersionId: module.contentVersionId,
         completedAt: new Date(),
       },
     });
 
-    await recalcParticipant(participantId);
+    if (isCorrect) {
+      await completeModuleIfEligible(participantId, module, watched, isLastModule, defaultPassMark, progress, {
+        stepId,
+        isCorrect,
+        wordCount: null,
+        reviewApproved: false,
+      });
+    }
     refreshCoursePaths();
 
-    const stillLocked = state.unlocked[module.id] === false;
-    if (stillLocked) return { error: "Module is locked." };
     return { ok: true, correct: isCorrect };
   } catch (error) {
     console.error("submitMcq failed", safeErrorDetails(error));
@@ -157,9 +201,9 @@ export async function submitReflectionAction(
   const answer = String(formData.get("answer") ?? "").trim();
 
   try {
-    const { participantId, module } = await participantAndModule(moduleSlug);
+    const { participantId, module, watched, isLastModule, defaultPassMark, progress } = await participantAndModule(moduleSlug);
     const step = module.steps.find((s) => s.id === stepId);
-    if (!step || step.type !== "REFLECTION") {
+    if (!step || (step.type !== "REFLECTION" && step.type !== "PARAGRAPH")) {
       return { error: "Reflection not found." };
     }
 
@@ -175,6 +219,8 @@ export async function submitReflectionAction(
       };
     }
 
+    await pinModuleVersion(participantId, module.id, module.contentVersionId);
+
     await prisma.stepProgress.upsert({
       where: {
         participantId_stepId: { participantId, stepId },
@@ -185,16 +231,31 @@ export async function submitReflectionAction(
         moduleId: module.id,
         wordCount: words,
         reflectionCipher: encryptText(answer),
+        contentVersionId: module.contentVersionId,
+        reviewStatus: module.paragraphApprovalRequired ? "PENDING" : "NOT_REQUIRED",
+        reviewComment: null,
+        reviewedById: null,
+        reviewedAt: null,
         completedAt: new Date(),
       },
       update: {
         wordCount: words,
         reflectionCipher: encryptText(answer),
+        contentVersionId: module.contentVersionId,
+        reviewStatus: module.paragraphApprovalRequired ? "PENDING" : "NOT_REQUIRED",
+        reviewComment: null,
+        reviewedById: null,
+        reviewedAt: null,
         completedAt: new Date(),
       },
     });
 
-    await recalcParticipant(participantId);
+    await completeModuleIfEligible(participantId, module, watched, isLastModule, defaultPassMark, progress, {
+      stepId,
+      isCorrect: null,
+      wordCount: words,
+      reviewApproved: false,
+    });
     refreshCoursePaths();
     return { ok: true, saved: true, wordCount: words };
   } catch (error) {

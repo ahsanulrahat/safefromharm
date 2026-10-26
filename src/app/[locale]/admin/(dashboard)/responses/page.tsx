@@ -8,6 +8,8 @@ import { buttonClass, cardClass, inputClass, labelClass } from "@/components/ui"
 import { formatDateTime } from "@/lib/format";
 import type { Prisma } from "@prisma/client";
 import type { AppLocale } from "@/i18n/routing";
+import { reviewWrittenSubmissionAction } from "@/actions/admin-submissions";
+import { hasAdminPermission } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +43,7 @@ const admin = await requireAdmin(locale, "responses:read");
   const where: Prisma.StepProgressWhereInput = {
     reflectionCipher: { not: null },
     step: {
-      type: "REFLECTION",
+      type: { in: ["REFLECTION", "PARAGRAPH"] },
       ...(moduleSlug ? { module: { slug: moduleSlug } } : {}),
     },
     ...(participantId ? { participantId } : {}),
@@ -121,6 +123,8 @@ const admin = await requireAdmin(locale, "responses:read");
       >
         {t("warning")}
       </div>
+      {search.error === "comment" && <p role="alert" className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{t("revisionCommentRequired")}</p>}
+      {search.error === "missing" && <p role="alert" className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{t("submissionMissing")}</p>}
 
       <form className={cardClass + " mt-4"} method="get">
         {participantId && (
@@ -226,6 +230,25 @@ const admin = await requireAdmin(locale, "responses:read");
                 <p className="mt-3 text-xs text-muted">
                   {t("prompt")}: {prompt}
                 </p>
+                <p className="mt-3 text-xs font-semibold text-brand-800 dark:text-brand-300">
+                  {t("reviewStatus")}: {t(row.reviewStatus.toLowerCase())}
+                  {row.reviewedAt ? ` · ${formatDateTime(row.reviewedAt, locale)}` : ""}
+                </p>
+                {row.reviewComment && <p className="mt-1 whitespace-pre-wrap text-sm text-muted">{t("reviewComment")}: {row.reviewComment}</p>}
+                {hasAdminPermission(admin.role, "responses:review") && (
+                  <form action={reviewWrittenSubmissionAction} className="mt-4 rounded-lg border border-brand-100 bg-brand-50/30 p-3 dark:border-brand-900 dark:bg-brand-950/30">
+                    <input type="hidden" name="locale" value={locale} />
+                    <input type="hidden" name="submissionId" value={row.id} />
+                    <input type="hidden" name="moduleSlug" value={moduleSlug} />
+                    <input type="hidden" name="participantId" value={participantId} />
+                    <label className="block text-xs font-semibold text-brand-900 dark:text-brand-200" htmlFor={`review-${row.id}`}>{t("reviewComment")}</label>
+                    <textarea id={`review-${row.id}`} name="comment" maxLength={2000} defaultValue={row.reviewComment ?? ""} rows={2} className={inputClass + " mt-1"} />
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <button name="decision" value="approve" type="submit" className={buttonClass("primary")}>{t("approve")}</button>
+                      <button name="decision" value="request_revision" type="submit" className={buttonClass("secondary")}>{t("requestRevision")}</button>
+                    </div>
+                  </form>
+                )}
                 <Link
                   href={`/admin/participants/${row.participant.id}`}
                   className="mt-2 inline-block text-xs font-semibold text-brand-700 hover:underline"

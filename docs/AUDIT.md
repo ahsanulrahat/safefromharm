@@ -1,5 +1,7 @@
 # Quality and repair audit
 
+> Historical record from an earlier build. Current release evidence and blockers are in [RELEASE-AUDIT.md](RELEASE-AUDIT.md).
+
 ## Issues fixed
 
 - Locale negotiation previously redirected the Bangla root back to itself. Default Bangla routes now resolve without a prefix, English stays under `/en`, and the locale proxy excludes API/framework/static paths.

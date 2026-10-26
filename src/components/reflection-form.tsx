@@ -14,6 +14,10 @@ export function ReflectionForm({
   prompt,
   minWords,
   defaultAnswer,
+  explanation,
+  approvalPending,
+  revisionRequested,
+  reviewComment,
   labels,
 }: {
   moduleSlug: string;
@@ -21,6 +25,10 @@ export function ReflectionForm({
   prompt: string;
   minWords: number;
   defaultAnswer: string;
+  explanation?: string;
+  approvalPending?: boolean;
+  revisionRequested?: boolean;
+  reviewComment?: string | null;
   labels: {
     submit: string;
     submitting: string;
@@ -29,6 +37,9 @@ export function ReflectionForm({
     savedNote: string;
     hint: string;
     ready: string;
+    explanation: string;
+    approvalPending: string;
+    revisionRequested: string;
   };
 }) {
   const [state, action, pending] = useActionState(
@@ -112,6 +123,25 @@ export function ReflectionForm({
           </span>
           {labels.savedNote}
         </p>
+      )}
+
+      {approvalPending && (
+        <p className="mt-3 rounded-lg border border-gold-200 bg-gold-50 px-3 py-2 text-sm font-semibold text-gold-900 dark:border-gold-800 dark:bg-gold-950/50 dark:text-gold-200" role="status">
+          {labels.approvalPending}
+        </p>
+      )}
+      {revisionRequested && (
+        <div className="mt-3 rounded-lg border border-gold-200 bg-gold-50 px-3 py-2 text-sm text-gold-900 dark:border-gold-800 dark:bg-gold-950/50 dark:text-gold-200" role="status">
+          <p className="font-semibold">{labels.revisionRequested}</p>
+          {reviewComment && <p className="mt-1 whitespace-pre-wrap">{reviewComment}</p>}
+        </div>
+      )}
+
+      {defaultAnswer && explanation && (
+        <div className="mt-3 rounded-lg border border-brand-100 bg-brand-50/70 p-3 text-sm text-brand-950 dark:border-brand-800 dark:bg-brand-900/50 dark:text-brand-100">
+          <p className="text-xs font-bold uppercase tracking-wide">{labels.explanation}</p>
+          <div className="prose prose-sm mt-1 max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: explanation }} />
+        </div>
       )}
 
       <button

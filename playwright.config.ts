@@ -1,4 +1,15 @@
 import { defineConfig, devices } from "@playwright/test";
+import { requirePlaywrightDatabaseTarget } from "./src/lib/playwright-target";
+
+// The full-flow spec creates and removes participant rows. Require a
+// deliberately supplied isolated database before starting either app or tests.
+process.env.DATABASE_URL = requirePlaywrightDatabaseTarget(
+  process.env.PLAYWRIGHT_E2E_DATABASE_URL,
+  process.env.PLAYWRIGHT_E2E_DATABASE_HOST,
+);
+if (process.env.PLAYWRIGHT_E2E_DIRECT_URL) {
+  process.env.DIRECT_URL = process.env.PLAYWRIGHT_E2E_DIRECT_URL;
+}
 
 export default defineConfig({
   testDir: "./e2e",

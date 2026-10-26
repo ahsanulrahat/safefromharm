@@ -14,6 +14,7 @@ export type AdminPermission =
   | "participants:progress"
   | "participants:export"
   | "responses:read"
+  | "responses:review"
   | "certificates:read"
   | "certificates:write"
   | "content:read"
@@ -37,6 +38,7 @@ export const ADMIN_PERMISSION_MATRIX: Record<
     "participants:progress",
     "participants:export",
     "responses:read",
+    "responses:review",
     "certificates:read",
     "certificates:write",
     "content:read",
@@ -61,6 +63,7 @@ export const ADMIN_PERMISSION_MATRIX: Record<
     "participants:details",
     "participants:progress",
     "responses:read",
+    "responses:review",
     "certificates:read",
   ],
   REPORTING_ADMIN: [

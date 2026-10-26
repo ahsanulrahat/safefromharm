@@ -472,6 +472,7 @@ async function seedAdmin() {
       name: "Superadmin",
       passwordHash,
       role: "SUPERADMIN",
+      mustChangePassword: true,
     },
   });
   console.info("Created the configured SUPERADMIN account.");

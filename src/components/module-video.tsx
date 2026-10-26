@@ -74,6 +74,7 @@ export function ModuleVideo({
 }) {
   const [activated, setActivated] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [savedWatched, setSavedWatched] = useState(false);
   const [marking, startTransition] = useTransition();
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -81,8 +82,12 @@ export function ModuleVideo({
   function saveWatched() {
     startTransition(async () => {
       const result = await markVideoWatchedAction(moduleSlug);
-      if (result.ok) router.refresh();
-      else setLoadError(true);
+      if (result.ok) {
+        setSavedWatched(true);
+        router.refresh();
+      } else {
+        setLoadError(true);
+      }
     });
   }
 
@@ -148,7 +153,7 @@ export function ModuleVideo({
         )}
       </div>
 
-      {watched ? (
+      {watched || savedWatched ? (
         <p className="mt-3 rounded-lg bg-brand-50 px-3 py-2 text-sm font-medium text-brand-800" role="status">
           ✓ {labels.watchedNote}
         </p>

@@ -31,24 +31,41 @@ enum AdminRole {
 enum StepType {
   MCQ
   REFLECTION
+  MULTI_SELECT
+  SCENARIO
+  PARAGRAPH
+}
+
+enum ContentVersionStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum SubmissionReviewStatus {
+  NOT_REQUIRED
+  PENDING
+  APPROVED
+  REVISION_REQUESTED
 }
 
 model Participant {
-  id              String    @id @default(cuid())
+  id              String   @id @default(cuid())
   fullNameBn      String
   nameEn          String
-  scoutId         String    @unique
+  scoutId         String   @unique
   unit            String
   district        String
   audience        Audience
-  phone           String?   @unique
+  phone           String?  @unique
   email           String?
-  isMinor         Boolean   @default(false)
-  guardianConsent Boolean   @default(false)
+  extraFields     Json     @default("{}")
+  isMinor         Boolean  @default(false)
+  guardianConsent Boolean  @default(false)
   consentAt       DateTime
-  resumeCode      String    @unique
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  resumeCode      String   @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   moduleProgress ModuleProgress[]
   stepProgress   StepProgress[]
@@ -60,40 +77,51 @@ model Participant {
 }
 
 model Module {
-  id            String   @id @default(cuid())
-  slug          String   @unique
-  audience      Audience
-  order         Int
-  titleBn       String
-  titleEn       String
-  descriptionBn String
-  descriptionEn String
-  videoProvider String   @default("youtube")
-  videoId       String
-  passMark      Int?
-  published     Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                        String   @id @default(cuid())
+  slug                      String   @unique
+  audience                  Audience
+  order                     Int
+  titleBn                   String
+  titleEn                   String
+  descriptionBn             String
+  descriptionEn             String
+  videoProvider             String   @default("youtube")
+  videoId                   String
+  writtenBn                 String   @default("") @db.Text
+  writtenEn                 String   @default("") @db.Text
+  mustWatch                 Boolean  @default(true)
+  attemptsAllowed           Int      @default(1)
+  paragraphApprovalRequired Boolean  @default(false)
+  passMark                  Int?
+  published                 Boolean  @default(true)
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
 
   steps    Step[]
   progress ModuleProgress[]
+  versions ModuleContentVersion[]
 
   @@index([order])
   @@index([audience, order])
 }
 
 model Step {
-  id              String   @id @default(cuid())
-  moduleId        String
-  order           Int
-  type            StepType
-  promptBn        String
-  promptEn        String
-  options         Json?
-  correctOptionId String?
-  minWords        Int      @default(30)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id               String    @id @default(cuid())
+  moduleId         String
+  order            Int
+  type             StepType
+  promptBn         String
+  promptEn         String
+  options          Json?
+  correctOptionId  String?
+  correctOptionIds Json?
+  explanationBn    String    @default("") @db.Text
+  explanationEn    String    @default("") @db.Text
+  points           Int       @default(1)
+  archivedAt       DateTime?
+  minWords         Int       @default(30)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   module   Module         @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   progress StepProgress[]
@@ -102,53 +130,85 @@ model Step {
   @@index([moduleId])
 }
 
-model ModuleProgress {
-  id             String    @id @default(cuid())
-  participantId  String
-  moduleId       String
-  startedAt      DateTime  @default(now())
-  videoWatchedAt DateTime?
-  completedAt    DateTime?
+model ModuleContentVersion {
+  id                String               @id @default(cuid())
+  moduleId          String
+  version           Int
+  status            ContentVersionStatus @default(DRAFT)
+  snapshot          Json
+  effectivePassMark Int                  @default(70)
+  createdById       String?
+  createdAt         DateTime             @default(now())
+  publishedAt       DateTime?
 
-  participant Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
-  module      Module      @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  module         Module           @relation(fields: [moduleId], references: [id], onDelete: Restrict)
+  createdBy      AdminUser?       @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  stepProgress   StepProgress[]
+  moduleProgress ModuleProgress[]
+
+  @@unique([moduleId, version])
+  @@index([moduleId, status, createdAt])
+}
+
+model ModuleProgress {
+  id               String    @id @default(cuid())
+  participantId    String
+  moduleId         String
+  startedAt        DateTime  @default(now())
+  videoWatchedAt   DateTime?
+  completedAt      DateTime?
+  contentVersionId String?
+
+  participant    Participant           @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  module         Module                @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  contentVersion ModuleContentVersion? @relation(fields: [contentVersionId], references: [id], onDelete: SetNull)
 
   @@unique([participantId, moduleId])
   @@index([participantId])
   @@index([moduleId])
+  @@index([contentVersionId])
 }
 
 model StepProgress {
-  id              String    @id @default(cuid())
-  participantId   String
-  stepId          String
-  moduleId        String
-  answerJson      Json?
-  isCorrect       Boolean?
-  wordCount       Int?
+  id               String                 @id @default(cuid())
+  participantId    String
+  stepId           String
+  moduleId         String
+  answerJson       Json?
+  isCorrect        Boolean?
+  wordCount        Int?
   // Sensitive free-text reflection, AES-256-GCM encrypted at rest.
-  reflectionCipher String?  @db.Text
-  completedAt     DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  reflectionCipher String?                @db.Text
+  contentVersionId String?
+  reviewStatus     SubmissionReviewStatus @default(NOT_REQUIRED)
+  reviewComment    String?                @db.Text
+  reviewedById     String?
+  reviewedAt       DateTime?
+  completedAt      DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
 
-  participant Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
-  step        Step        @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  participant    Participant           @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  step           Step                  @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  contentVersion ModuleContentVersion? @relation(fields: [contentVersionId], references: [id], onDelete: SetNull)
+  reviewedBy     AdminUser?            @relation("SubmissionReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
 
   @@unique([participantId, stepId])
   @@index([participantId])
   @@index([moduleId])
+  @@index([contentVersionId])
+  @@index([reviewStatus, updatedAt])
 }
 
 model Certificate {
-  id             String    @id
-  participantId  String
-  issuedAt       DateTime  @default(now())
-  revokedAt      DateTime?
-  revokedReason  String?
-  replacesId     String?
+  id            String    @id
+  participantId String
+  issuedAt      DateTime  @default(now())
+  revokedAt     DateTime?
+  revokedReason String?
+  replacesId    String?
   // Set to participantId while active, null when revoked. Unique constraint
   // guarantees at most one active certificate per participant.
-  activeKey      String?   @unique
+  activeKey     String?   @unique
 
   participant Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
 
@@ -157,23 +217,25 @@ model Certificate {
 }
 
 model AdminUser {
-  id                  String         @id @default(cuid())
-  loginId             String         @unique
-  email               String         @unique
+  id                  String    @id @default(cuid())
+  loginId             String    @unique
+  email               String    @unique
   name                String
   passwordHash        String
-  role                AdminRole      @default(VIEWER)
-  isActive            Boolean        @default(true)
+  role                AdminRole @default(VIEWER)
+  isActive            Boolean   @default(true)
   deletedAt           DateTime?
-  mustChangePassword  Boolean        @default(false)
-  sessionVersion      Int            @default(0)
-  failedLoginAttempts Int            @default(0)
+  mustChangePassword  Boolean   @default(false)
+  sessionVersion      Int       @default(0)
+  failedLoginAttempts Int       @default(0)
   lockedUntil         DateTime?
   lastLoginAt         DateTime?
-  createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
-  sessions AdminSession[]
+  sessions            AdminSession[]
+  contentVersions     ModuleContentVersion[]
+  reviewedSubmissions StepProgress[]         @relation("SubmissionReviewer")
 }
 
 model AdminSession {

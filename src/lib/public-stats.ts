@@ -14,16 +14,14 @@ export async function getPublicStats() {
       ]);
 
     return {
+      available: true as const,
       totalParticipants,
       totalCertificates,
       totalModules,
     };
   } catch {
-    // If DB is unavailable, return zeros rather than crashing the homepage.
     return {
-      totalParticipants: 0,
-      totalCertificates: 0,
-      totalModules: 0,
+      available: false as const,
     };
   }
 }

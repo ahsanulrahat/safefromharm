@@ -1,5 +1,7 @@
 # Quality and Flow Audit — 2026-10-25
 
+> Historical record from an earlier build. Current release evidence and blockers are in [RELEASE-AUDIT.md](RELEASE-AUDIT.md).
+
 ## Changes made
 
 - Added under-18 and guardian-consent controls to the registration form. The

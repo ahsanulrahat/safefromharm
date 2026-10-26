@@ -5,13 +5,16 @@ import { prisma } from "@/lib/prisma";
 import { DEFAULT_PASS_MARK } from "@/lib/settings";
 import {
   moveModuleAction,
+  publishModuleVersionAction,
   saveSettingsAction,
-  togglePublishAction,
 } from "@/actions/admin";
 import { ContentEditor } from "@/components/admin/content-editor";
 import { buttonClass, cardClass, inputClass, labelClass } from "@/components/ui";
 import type { AppLocale } from "@/i18n/routing";
 import type { Step } from "@prisma/client";
+import { contentModuleSchema } from "@/lib/validation";
+import { hasCompleteTranslations } from "@/lib/content";
+import { hasAdminPermission } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
 
@@ -47,25 +50,32 @@ function stepJson(step: Step) {
     type: step.type,
     promptBn: step.promptBn,
     promptEn: step.promptEn,
-    ...(step.type === "MCQ"
-      ? {
-          options: normalizeOptions(step.options),
-          correctOptionId: step.correctOptionId,
-        }
-      : { minWords: step.minWords }),
+    options: normalizeOptions(step.options),
+    correctOptionId: step.correctOptionId,
+    correctOptionIds: Array.isArray(step.correctOptionIds) ? step.correctOptionIds : [],
+    minWords: step.minWords,
+    explanationBn: step.explanationBn,
+    explanationEn: step.explanationEn,
+    points: step.points,
   };
 }
 
 function templateJson() {
   return {
     slug: "new-module",
+    audience: "ROVER",
     titleBn: "নতুন মডিউল (SAMPLE)",
     titleEn: "New module (SAMPLE)",
     descriptionBn:
       "SAMPLE — replace with official Bangladesh Scouts Safe from Harm content.",
     descriptionEn:
       "SAMPLE — replace with official Bangladesh Scouts Safe from Harm content.",
+    writtenBn: "",
+    writtenEn: "",
     videoId: "aqz-KE-bpKQ",
+    mustWatch: true,
+    attemptsAllowed: 1,
+    paragraphApprovalRequired: false,
     passMark: null,
     published: false,
     steps: [
@@ -78,12 +88,18 @@ function templateJson() {
           { id: "b", bn: "বিকল্প খ", en: "Option B" },
         ],
         correctOptionId: "a",
+        points: 1,
+        explanationBn: "",
+        explanationEn: "",
       },
       {
         type: "REFLECTION",
         promptBn: "নমুনা প্রতিফলন প্রশ্ন — এটি অফিসিয়াল কনটেন্ট নয়।",
         promptEn: "Sample reflection prompt — this is not official content.",
         minWords: 30,
+        points: 1,
+        explanationBn: "",
+        explanationEn: "",
       },
     ],
   };
@@ -97,7 +113,7 @@ export default async function AdminContentPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
-await requireAdmin(locale, "content:read");
+  const admin = await requireAdmin(locale, "content:read");
   const search = await searchParams;
   const requestedSlug =
     typeof search.module === "string" ? search.module : "";
@@ -109,7 +125,7 @@ await requireAdmin(locale, "content:read");
     prisma.module.findMany({
       orderBy: { order: "asc" },
       include: {
-        steps: { orderBy: { order: "asc" } },
+        steps: { where: { archivedAt: null }, orderBy: { order: "asc" } },
         _count: { select: { progress: true } },
       },
     }),
@@ -120,31 +136,37 @@ await requireAdmin(locale, "content:read");
     ? modules.find((module) => module.slug === requestedSlug)
     : undefined;
 
-  const editorJson = selected
-    ? JSON.stringify(
-        {
-          slug: selected.slug,
-          titleBn: selected.titleBn,
-          titleEn: selected.titleEn,
-          descriptionBn: selected.descriptionBn,
-          descriptionEn: selected.descriptionEn,
-          videoId: selected.videoId,
-          passMark: selected.passMark,
-          published: selected.published,
-          steps: selected.steps.map(stepJson),
-        },
-        null,
-        2
-      )
-    : JSON.stringify(templateJson(), null, 2);
-
-  const hasLanguageGap = Boolean(selected && (
-    !selected.titleBn.trim() || !selected.titleEn.trim() ||
-    !selected.steps.every((step) => {
-      if (!step.promptBn.trim() || !step.promptEn.trim()) return false;
-      return step.type !== "MCQ" || normalizeOptions(step.options).every((option) => option.bn.trim() && option.en.trim());
-    })
-  ));
+  const versions = selected ? await prisma.moduleContentVersion.findMany({
+    where: { moduleId: selected.id },
+    orderBy: { version: "desc" },
+    take: 20,
+  }) : [];
+  const requestedVersionId = typeof search.version === "string" ? search.version : "";
+  const activeVersion = versions.find((version) => version.id === requestedVersionId) ??
+    versions.find((version) => version.status === "DRAFT") ??
+    versions.find((version) => version.status === "PUBLISHED") ?? null;
+  const fallbackSnapshot = selected ? {
+    slug: selected.slug,
+    audience: selected.audience,
+    titleBn: selected.titleBn,
+    titleEn: selected.titleEn,
+    descriptionBn: selected.descriptionBn,
+    descriptionEn: selected.descriptionEn,
+    writtenBn: selected.writtenBn,
+    writtenEn: selected.writtenEn,
+    videoId: selected.videoId,
+    mustWatch: selected.mustWatch,
+    attemptsAllowed: selected.attemptsAllowed,
+    paragraphApprovalRequired: selected.paragraphApprovalRequired,
+    passMark: selected.passMark,
+    published: selected.published,
+    steps: selected.steps.map(stepJson),
+  } : templateJson();
+  const rawSnapshot = activeVersion?.snapshot ?? fallbackSnapshot;
+  const activeParsed = contentModuleSchema.safeParse(rawSnapshot);
+  const activeSnapshot = activeParsed.success ? activeParsed.data : fallbackSnapshot;
+  const editorJson = JSON.stringify(activeSnapshot, null, 2);
+  const hasLanguageGap = !hasCompleteTranslations(activeSnapshot);
 
   const passMark = setting?.value ?? String(DEFAULT_PASS_MARK);
   const showEditor = isNew || Boolean(selected);
@@ -171,6 +193,11 @@ await requireAdmin(locale, "content:read");
           {tc("saved")}
         </p>
       )}
+      {search.published === "1" && <p role="status" className="mt-4 rounded-lg border border-brand-300 bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-800">{t("publishSuccess")}</p>}
+      {(search.error === "reauth" || search.error === "reauth-settings") && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-800">{t("reauthRequired")}</p>}
+      {search.error === "translations" && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-800">{t("languageGap")}</p>}
+      {search.error === "slug" && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-800">{t("slugAlreadyUsed")}</p>}
+      {search.error === "pass-mark" && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-800">{t("invalidPassMark")}</p>}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-5">
         <section className={cardClass + " lg:col-span-2"}>
@@ -231,16 +258,6 @@ await requireAdmin(locale, "content:read");
                       ↓ {t("moveDown")}
                     </button>
                   </form>
-                  <form action={togglePublishAction}>
-                    <input type="hidden" name="locale" value={locale} />
-                    <input type="hidden" name="slug" value={module.slug} />
-                    <button
-                      type="submit"
-                      className="rounded-md border border-brand-200 px-2 py-1 text-xs font-semibold text-brand-800 hover:bg-white"
-                    >
-                      {module.published ? t("unpublish") : t("publish")}
-                    </button>
-                  </form>
                 </div>
               </li>
             ))}
@@ -265,18 +282,22 @@ await requireAdmin(locale, "content:read");
                 originalSlug={selected?.slug ?? ""}
                 initialJson={editorJson}
                 hasLanguageGap={hasLanguageGap}
+                videoPreviewLabels={{ videoPreview: t("videoPreview"), previewAs: t("previewAs"), rover: t("rover"), leader: t("leader") }}
                 labels={{
                   title: t("editorTitle"),
                   hint: t("editorHint"),
                   jsonLabel: t("jsonLabel"),
                   format: t("format"),
                   formatError: t("formatError"),
-                  save: t("save"),
-                  saving: t("saving"),
+                  save: t("saveDraft"),
+                  saving: t("savingDraft"),
                   cancel: t("cancel"),
                   validationTitle: t("validationTitle"),
                   idNote: t("idNote"),
                   languageGap: t("languageGap"),
+                  exportJson: t("exportJson"),
+                  importHint: t("importHint"),
+                  invalidVideo: t("invalidVideo"),
                 }}
               />
               <p className="mt-3 text-xs text-muted">
@@ -291,7 +312,51 @@ await requireAdmin(locale, "content:read");
         </section>
       </div>
 
-      <section className={cardClass + " mt-6 max-w-xl"}>
+      {selected && (
+        <section className={cardClass + " mt-6"}>
+          <h2 className="text-lg font-bold text-brand-950">{t("versionHistory")}</h2>
+          <p className="mt-1 text-xs text-muted">{t("versionHistoryHint")}</p>
+          <ul className="mt-4 space-y-3">
+            {versions.map((version) => (
+              <li key={version.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-100 p-3">
+                <div>
+                  <p className="font-semibold text-brand-950">{t("versionNumber", { version: version.version })} · {t(version.status.toLowerCase())}</p>
+                  <p className="text-xs text-muted">{version.createdAt.toLocaleString(locale === "bn" ? "bn-BD" : "en-GB")}</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Link href={`/admin/content?module=${encodeURIComponent(selected.slug)}&version=${encodeURIComponent(version.id)}`} className={buttonClass("secondary")}>{t("editVersion")}</Link>
+                  {version.status === "DRAFT" && (
+                    <form action={publishModuleVersionAction} className="flex flex-wrap items-end gap-2">
+                      <input type="hidden" name="locale" value={locale} />
+                      <input type="hidden" name="versionId" value={version.id} />
+                      <input type="hidden" name="mode" value="publish" />
+                      <label className="text-xs font-semibold text-muted">
+                        {t("confirmPassword")}
+                        <input className={inputClass + " mt-1 min-w-48"} type="password" name="currentPassword" autoComplete="current-password" required />
+                      </label>
+                      <button type="submit" className={buttonClass("primary")}>{t("publish")}</button>
+                    </form>
+                  )}
+                  {version.status === "ARCHIVED" && (
+                    <form action={publishModuleVersionAction} className="flex flex-wrap items-end gap-2">
+                      <input type="hidden" name="locale" value={locale} />
+                      <input type="hidden" name="versionId" value={version.id} />
+                      <input type="hidden" name="mode" value="rollback" />
+                      <label className="text-xs font-semibold text-muted">
+                        {t("confirmPassword")}
+                        <input className={inputClass + " mt-1 min-w-48"} type="password" name="currentPassword" autoComplete="current-password" required />
+                      </label>
+                      <button type="submit" className={buttonClass("secondary")}>{t("rollback")}</button>
+                    </form>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {hasAdminPermission(admin.role, "settings:write") && <section className={cardClass + " mt-6 max-w-xl"}>
         <h2 className="text-lg font-bold text-brand-950">{t("settingsTitle")}</h2>
         <p className="mt-0.5 text-xs text-muted">{t("settingsHint")}</p>
         <form action={saveSettingsAction} className="mt-4 flex flex-wrap items-end gap-3">
@@ -312,6 +377,10 @@ await requireAdmin(locale, "content:read");
               required
             />
           </div>
+          <div className="min-w-52 flex-1">
+            <label className={labelClass} htmlFor="passMarkPassword">{t("confirmPassword")}</label>
+            <input id="passMarkPassword" name="currentPassword" type="password" autoComplete="current-password" required className={inputClass} />
+          </div>
           <button type="submit" className={buttonClass("primary")}>
             {t("saveSettings")}
           </button>
@@ -319,7 +388,7 @@ await requireAdmin(locale, "content:read");
         <p className="mt-3 rounded-lg border border-gold-200 bg-gold-50 px-3 py-2 text-xs text-gold-900">
           {t("sampleNote")}
         </p>
-      </section>
+      </section>}
     </div>
   );
 }

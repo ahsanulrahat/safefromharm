@@ -1,5 +1,7 @@
 # Production Performance Snapshot — 2026-10-25
 
+> Historical snapshot of an earlier production build. Current release evidence is in [RELEASE-AUDIT.md](RELEASE-AUDIT.md).
+
 Single-request `curl` measurements against `https://scout-pi-snowy.vercel.app`
 after the production release. Times are elapsed seconds from this client; they
 are a smoke snapshot, not a Lighthouse or field-user study.

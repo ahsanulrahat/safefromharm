@@ -11,29 +11,9 @@ import { CheckIcon } from "@/components/icons";
 import { buttonClass } from "@/components/ui";
 import type { AppLocale } from "@/i18n/routing";
 import { localizedText } from "@/i18n/localized";
+import { sanitizeRichText, toPublicQuestion } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
-
-type Option = { id: string; bn: string; en: string };
-
-function parseOptions(value: unknown): Option[] {
-  if (!Array.isArray(value)) return [];
-  return value.flatMap((item) => {
-    if (
-      item &&
-      typeof item === "object" &&
-      "id" in item &&
-      "bn" in item &&
-      "en" in item &&
-      typeof item.id === "string" &&
-      typeof item.bn === "string" &&
-      typeof item.en === "string"
-    ) {
-      return [{ id: item.id, bn: item.bn, en: item.en }];
-    }
-    return [];
-  });
-}
 
 export async function generateMetadata({
   params,
@@ -79,8 +59,12 @@ export default async function ModulePage({
     );
   }
 
-  const mcqSteps = currentModule.steps.filter((s) => s.type === "MCQ");
-  const reflectionSteps = currentModule.steps.filter((s) => s.type === "REFLECTION");
+  const mcqSteps = currentModule.steps.filter((s) =>
+    s.type === "MCQ" || s.type === "SCENARIO" || s.type === "MULTI_SELECT"
+  );
+  const reflectionSteps = currentModule.steps.filter((s) =>
+    s.type === "REFLECTION" || s.type === "PARAGRAPH"
+  );
   const nextModule = state.modules[moduleIndex + 1];
   const isComplete = Boolean(evaluation?.complete);
 
@@ -155,6 +139,12 @@ export default async function ModulePage({
         />
       </section>
 
+      {localizedText(locale, currentModule.writtenBn, currentModule.writtenEn).trim() && (
+        <section className="prose prose-brand mt-8 max-w-none rounded-2xl border border-brand-100 bg-white/80 p-5 shadow-xs dark:prose-invert dark:border-brand-900 dark:bg-brand-950/60 sm:p-6">
+          <div dangerouslySetInnerHTML={{ __html: sanitizeRichText(localizedText(locale, currentModule.writtenBn, currentModule.writtenEn)) }} />
+        </section>
+      )}
+
       {mcqSteps.length > 0 && (
         <section className="mt-10">
           <div className="mb-4">
@@ -162,7 +152,7 @@ export default async function ModulePage({
           </div>
           <div className="space-y-6">
             {mcqSteps.map((step, index) => {
-              const options = parseOptions(step.options);
+              const question = toPublicQuestion(step, locale);
               const progress = state.progressByStep.get(step.id);
               return (
                 <div key={step.id}>
@@ -177,18 +167,19 @@ export default async function ModulePage({
                   <McqForm
                     moduleSlug={currentModule.slug}
                     stepId={step.id}
-                    prompt={localizedText(locale, step.promptBn, step.promptEn)}
-                    options={options.map((option) => ({
-                      id: option.id,
-                      label: localizedText(locale, option.bn, option.en),
-                    }))}
+                    prompt={question.prompt}
+                    options={question.options}
                     existingOptionId={progress?.answerOptionId ?? undefined}
+                    existingOptionIds={progress?.answerOptionIds ?? []}
+                    multiple={step.type === "MULTI_SELECT"}
+                    explanation={progress?.completedAt ? sanitizeRichText(localizedText(locale, step.explanationBn, step.explanationEn)) : undefined}
                     labels={{
                       submit: t("submit"),
                       submitting: t("submitting"),
                       correct: t("correct"),
                       incorrect: t("incorrect"),
                       answeredNote: t("answeredNote"),
+                      explanation: t("explanation"),
                     }}
                   />
                 </div>
@@ -222,6 +213,10 @@ export default async function ModulePage({
                   prompt={localizedText(locale, step.promptBn, step.promptEn)}
                   minWords={step.minWords}
                   defaultAnswer={defaultAnswer}
+                  explanation={progress?.completedAt ? sanitizeRichText(localizedText(locale, step.explanationBn, step.explanationEn)) : undefined}
+                  approvalPending={progress?.reviewStatus === "PENDING"}
+                  revisionRequested={progress?.reviewStatus === "REVISION_REQUESTED"}
+                  reviewComment={progress?.reviewComment}
                   labels={{
                     submit: t("submitReflection"),
                     submitting: t("submitting"),
@@ -230,6 +225,9 @@ export default async function ModulePage({
                     savedNote: t("savedNote"),
                     hint: t("reflectionHint", { min: "{min}" }),
                     ready: t("ready"),
+                    explanation: t("explanation"),
+                    approvalPending: t("approvalPending"),
+                    revisionRequested: t("revisionRequested"),
                   }}
                 />
               );

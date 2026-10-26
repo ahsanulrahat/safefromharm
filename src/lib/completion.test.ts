@@ -117,6 +117,51 @@ describe("evaluateModule", () => {
     });
     expect(result.complete).toBe(true);
   });
+
+  it("scores scenario and multi-select questions by their points", () => {
+    const result = evaluateModule({
+      module: {
+        id: "weighted",
+        passMark: 80,
+        steps: [
+          { id: "multi", type: "MULTI_SELECT", minWords: 1, points: 2 },
+          { id: "scenario", type: "SCENARIO", minWords: 1, points: 3 },
+        ],
+      },
+      progress: [
+        { stepId: "multi", isCorrect: true, wordCount: null },
+        { stepId: "scenario", isCorrect: true, wordCount: null },
+      ],
+      videoWatched: true,
+      defaultPassMark: 70,
+    });
+    expect(result.mcqTotal).toBe(5);
+    expect(result.mcqCorrect).toBe(5);
+    expect(result.complete).toBe(true);
+  });
+
+  it("can skip video watching and waits for required written approval", () => {
+    const paragraphModule: ModuleForCompletion = {
+      id: "approval",
+      passMark: null,
+      mustWatch: false,
+      steps: [{ id: "p1", type: "PARAGRAPH", minWords: 20, approvalRequired: true }],
+    };
+    const pending = evaluateModule({
+      module: paragraphModule,
+      progress: [{ stepId: "p1", isCorrect: null, wordCount: 22, reviewApproved: false }],
+      videoWatched: false,
+      defaultPassMark: 70,
+    });
+    expect(pending.complete).toBe(false);
+    const approved = evaluateModule({
+      module: paragraphModule,
+      progress: [{ stepId: "p1", isCorrect: null, wordCount: 22, reviewApproved: true }],
+      videoWatched: false,
+      defaultPassMark: 70,
+    });
+    expect(approved.complete).toBe(true);
+  });
 });
 
 describe("evaluateCourse", () => {

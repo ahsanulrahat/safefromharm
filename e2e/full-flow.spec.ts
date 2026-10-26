@@ -1,10 +1,6 @@
 import { expect, test } from "@playwright/test";
-import dotenv from "dotenv";
 import bn from "../messages/bn.json";
 import en from "../messages/en.json";
-
-dotenv.config({ path: ".env.local", quiet: true });
-dotenv.config({ path: ".env", quiet: true });
 let prisma: typeof import("../src/lib/prisma").prisma;
 const createdScoutIds = new Set<string>();
 
@@ -21,7 +17,7 @@ const scenarios = [
 
 for (const scenario of scenarios) {
   test(`${scenario.audience} registration through certificate and verification (${scenario.locale}/${scenario.theme})`, async ({ page }) => {
-    test.setTimeout(300_000);
+    test.setTimeout(600_000);
     const stamp = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
     const scoutId = `QA26-${scenario.audience}-${stamp}`;
     createdScoutIds.add(scoutId);
@@ -50,7 +46,10 @@ for (const scenario of scenarios) {
       await form.locator('[name="phone"]').fill(phone);
       await form.locator('[name="consent"]').check();
       await form.getByRole("button", { name: messages.register.submit }).click();
-      await expect(page).toHaveURL(new RegExp(`${prefix}/registered$`));
+      // The first request may wake an autosuspended isolated database branch.
+      await expect(page).toHaveURL(new RegExp(`${prefix}/registered$`), {
+        timeout: 30_000,
+      });
 
       // Confirm duplicate IDs are rejected in the selected UI language.
       await page.goto(`${prefix}/register`);
@@ -90,7 +89,9 @@ for (const scenario of scenarios) {
             await stepForm.locator('textarea[name="answer"]').fill(answer);
             await stepForm.getByRole("button", { name: messages.module.submitReflection }).click();
           }
-          await expect(stepForm.getByRole("status")).toBeVisible({ timeout: 30_000 });
+          // The isolated Neon Preview branch can pause on a cold compute; do
+          // not start cleanup while its server action is still writing.
+          await expect(stepForm.getByRole("status")).toBeVisible({ timeout: 60_000 });
         }
       }
 

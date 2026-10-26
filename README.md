@@ -85,6 +85,17 @@ npm run build
 npm run db:studio    # Prisma Studio
 ```
 
+### Browser tests
+
+`npm run test:e2e` refuses to start unless `PLAYWRIGHT_E2E_DATABASE_URL` and
+`PLAYWRIGHT_E2E_DATABASE_HOST` point to a disposable database. There is no
+production default and `.env.local` is not loaded automatically. Use a Neon
+branch or a local PostgreSQL database migrated with `prisma migrate deploy`;
+never point these variables at production.
+
+The admin diagnostic spec additionally requires the local-only `AUDIT_*`
+values and a seeded `SUPERADMIN` account with a forced first password change.
+
 ### Environment variables
 
 | Variable | Required | Purpose |
@@ -135,13 +146,18 @@ confirmed with the organizers before launch.
 
 ## Deployment (Vercel + Neon)
 
-Current production deployment (Vercel CLI):
+Current Vercel project: `ahsanulrahats-projects/scout`.
 
-- URL: https://scout-moot-2026.vercel.app
-- Vercel project: `ahsanulrahats-projects/scout-moot-2026`
-- Database: Neon Postgres provisioned through the Vercel Marketplace
-  integration (`neon-bisque-clock`)
-- Health check: https://scout-moot-2026.vercel.app/api/health
+- Production alias: https://scout-pi-snowy.vercel.app
+- Health check: https://scout-pi-snowy.vercel.app/api/health
+- Preview deployments are protected by Vercel SSO.
+- Production currently runs the pre-control-center build. The
+  `codex/admin-control-center` branch requires four additional database
+  migrations and has not been released. See
+  [docs/RELEASE-AUDIT.md](docs/RELEASE-AUDIT.md) for the evidence and blockers.
+- Deployments created with the Vercel CLI carry no Git commit metadata. Until
+  the GitHub repository is connected to the Vercel project, a deployment cannot
+  be traced to a commit or assumed to use branch-scoped Preview variables.
 
 ### Reproducing the deployment
 
@@ -188,7 +204,14 @@ Current production deployment (Vercel CLI):
 - Replace the seeded `admin@example.org` account with an organizer-owned email
   and rotate the generated password.
 - Connect the GitHub repository to the Vercel project for Git-based deploys and
-  previews (the current deployment was made with the Vercel CLI).
+  previews. CLI deployments currently have no Git metadata and cannot be
+  matched to a commit.
+- Apply the four control-center migrations to a backed-up Neon branch, verify
+  them there, and only then deploy the matching code to production. Deploying
+  the branch against the current production schema would break admin login.
+- Finish or explicitly descope the registration-form builder, editable
+  site/certificate settings, and object-storage upload flow. The permissions and
+  `BLOB_READ_WRITE_TOKEN` exist, but no application code uses them yet.
 - Confirm A B M Abdus Sattar's official designation and update
   `CONFIG.signatoryTitle`.
 - Add the real signature and logo PNGs to `public/`.
@@ -197,7 +220,9 @@ Current production deployment (Vercel CLI):
   screen instead of sending it.
 - The public privacy notice is inline in the registration page; have it
   reviewed by the organizers before launch.
-- The production database currently contains live smoke-test registrations
-  (`SMOKE-*` Scout IDs). Remove them before sharing organizer reports.
-- No automated end-to-end browser test is included; use the smoke-test
-  checklist above.
+- Remote database latency is a release risk: a complete Rover journey took
+  about seven minutes against the US-East Preview branch, and individual saves
+  took 11–18 seconds from the audit location. Measure from the organizers'
+  expected region before launch.
+- Automated browser coverage exists (`e2e/`), but it must be run against a
+  disposable database and a locally built production server, not production.

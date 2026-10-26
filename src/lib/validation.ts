@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizeYouTubeVideoId } from "@/lib/content";
 import { normalizeDigits } from "@/lib/ids";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -84,22 +85,26 @@ export function resumeWithIdSchema(m: ResumeMessages) {
 
 export const contentOptionSchema = z.object({
   id: z.string().trim().min(1).max(40),
-  bn: z.string().trim().min(1).max(500),
-  en: z.string().trim().min(1).max(500),
+  bn: z.string().trim().max(500),
+  en: z.string().trim().max(500),
 });
 
 export const contentStepSchema = z
   .object({
     id: z.string().trim().min(1).max(60).optional(),
-    type: z.enum(["MCQ", "REFLECTION"]),
-    promptBn: z.string().trim().min(1).max(2000),
-    promptEn: z.string().trim().min(1).max(2000),
-    options: z.array(contentOptionSchema).max(8).optional(),
-    correctOptionId: z.string().trim().max(40).optional(),
+    type: z.enum(["MCQ", "MULTI_SELECT", "SCENARIO", "REFLECTION", "PARAGRAPH"]),
+    promptBn: z.string().trim().max(2000),
+    promptEn: z.string().trim().max(2000),
+    options: z.array(contentOptionSchema).max(8).nullish(),
+    correctOptionId: z.string().trim().max(40).nullish(),
+    correctOptionIds: z.array(z.string().trim().min(1).max(40)).max(8).nullish(),
     minWords: z.coerce.number().int().min(1).max(1000).default(30),
+    explanationBn: z.string().max(4000).default(""),
+    explanationEn: z.string().max(4000).default(""),
+    points: z.coerce.number().int().min(1).max(100).default(1),
   })
   .superRefine((step, ctx) => {
-    if (step.type === "MCQ") {
+    if (step.type === "MCQ" || step.type === "SCENARIO" || step.type === "MULTI_SELECT") {
       if (!step.options || step.options.length < 2) {
         ctx.addIssue({
           code: "custom",
@@ -109,12 +114,19 @@ export const contentStepSchema = z
         return;
       }
       const ids = new Set(step.options.map((o) => o.id));
-      if (!step.correctOptionId || !ids.has(step.correctOptionId)) {
+      const multiple = step.type === "MULTI_SELECT";
+      const answers = multiple
+        ? step.correctOptionIds ?? []
+        : step.correctOptionId ? [step.correctOptionId] : [];
+      if (answers.length === 0 || answers.some((answer) => !ids.has(answer))) {
         ctx.addIssue({
           code: "custom",
-          path: ["correctOptionId"],
-          message: "correctOptionId must match one of the option ids.",
+          path: [multiple ? "correctOptionIds" : "correctOptionId"],
+          message: "Correct answer ids must match the option ids.",
         });
+      }
+      if (multiple && new Set(answers).size !== answers.length) {
+        ctx.addIssue({ code: "custom", path: ["correctOptionIds"], message: "Correct answer ids must be unique." });
       }
       if (ids.size !== step.options.length) {
         ctx.addIssue({
@@ -134,18 +146,25 @@ export const contentModuleSchema = z.object({
     .max(80)
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers and hyphens."),
   audience: z.enum(["ROVER", "LEADER"]),
-  titleBn: z.string().trim().min(1).max(200),
-  titleEn: z.string().trim().min(1).max(200),
+  titleBn: z.string().trim().max(200),
+  titleEn: z.string().trim().max(200),
   descriptionBn: z.string().trim().max(4000),
   descriptionEn: z.string().trim().max(4000),
-  videoId: z
-    .string()
-    .trim()
-    .min(5)
-    .max(40)
-    .regex(/^[A-Za-z0-9_-]+$/, "Use a YouTube video ID, not a full URL."),
+  writtenBn: z.string().max(20_000).default(""),
+  writtenEn: z.string().max(20_000).default(""),
+  videoId: z.string().trim().min(1).max(2048).transform((value, ctx) => {
+    const videoId = normalizeYouTubeVideoId(value);
+    if (!videoId) {
+      ctx.addIssue({ code: "custom", message: "Use a valid YouTube video URL or video ID." });
+      return z.NEVER;
+    }
+    return videoId;
+  }),
+  mustWatch: z.boolean().default(true),
+  attemptsAllowed: z.coerce.number().int().min(1).max(20).default(1),
+  paragraphApprovalRequired: z.boolean().default(false),
   passMark: z.coerce.number().int().min(0).max(100).nullable().optional(),
-  published: z.boolean().default(true),
+  published: z.boolean().default(false),
   steps: z.array(contentStepSchema).min(1).max(50),
 });
 

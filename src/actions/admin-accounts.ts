@@ -105,8 +105,6 @@ export async function updateOwnAdminAccountAction(
   if (!validLoginId(loginId)) return { error: "LOGIN_INVALID" };
   if (!await ensureIdentityAvailable(loginId, email, admin.id)) return { error: "DUPLICATE" };
 
-  if (!await ensureIdentityAvailable(loginId, email, admin.id)) return { error: "DUPLICATE" };
-
   const before = await prisma.adminUser.findUnique({
     where: { id: admin.id },
     select: { name: true, email: true, loginId: true },

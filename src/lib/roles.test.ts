@@ -15,6 +15,7 @@ const allPermissions: AdminPermission[] = [
   "participants:progress",
   "participants:export",
   "responses:read",
+  "responses:review",
   "certificates:read",
   "certificates:write",
   "content:read",

@@ -16,6 +16,9 @@ export function McqForm({
   prompt,
   options,
   existingOptionId,
+  existingOptionIds = [],
+  multiple = false,
+  explanation,
   labels,
 }: {
   moduleSlug: string;
@@ -23,12 +26,16 @@ export function McqForm({
   prompt: string;
   options: Option[];
   existingOptionId?: string;
+  existingOptionIds?: string[];
+  multiple?: boolean;
+  explanation?: string;
   labels: {
     submit: string;
     submitting: string;
     correct: string;
     incorrect: string;
     answeredNote: string;
+    explanation: string;
   };
 }) {
   const [state, action, pending] = useActionState(submitMcqAction, initialState);
@@ -54,11 +61,11 @@ export function McqForm({
               className="group relative flex cursor-pointer items-start gap-3.5 rounded-xl border border-brand-200/80 bg-white/70 p-3.5 text-sm font-medium text-brand-950 shadow-xs transition-all duration-200 hover:border-brand-400 hover:bg-brand-50/40 hover:shadow-sm has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50/90 has-[:checked]:shadow-xs has-[:checked]:ring-2 has-[:checked]:ring-brand-500/20 dark:border-brand-800 dark:bg-brand-950/60 dark:text-brand-100 dark:hover:bg-brand-900/40 dark:has-[:checked]:border-brand-500 dark:has-[:checked]:bg-brand-900/60"
             >
               <input
-                type="radio"
-                name="optionId"
+                type={multiple ? "checkbox" : "radio"}
+                name={multiple ? "optionIds" : "optionId"}
                 value={option.id}
-                required
-                defaultChecked={existingOptionId === option.id}
+                required={!multiple}
+                defaultChecked={multiple ? existingOptionIds.includes(option.id) : existingOptionId === option.id}
                 className="mt-0.5 h-4 w-4 shrink-0 border-brand-300 text-brand-700 accent-brand-700 transition focus:ring-brand-400"
               />
               <span className="leading-relaxed transition-colors group-hover:text-brand-900 dark:group-hover:text-white group-has-[:checked]:font-semibold group-has-[:checked]:text-brand-950 dark:group-has-[:checked]:text-white">
@@ -99,6 +106,13 @@ export function McqForm({
               </span>
             )}
           </div>
+        </div>
+      )}
+
+      {state.ok && explanation && (
+        <div className="mt-3 rounded-lg border border-brand-100 bg-brand-50/70 p-3 text-sm text-brand-950 dark:border-brand-800 dark:bg-brand-900/50 dark:text-brand-100">
+          <p className="text-xs font-bold uppercase tracking-wide">{labels.explanation}</p>
+          <div className="prose prose-sm mt-1 max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: explanation }} />
         </div>
       )}
 

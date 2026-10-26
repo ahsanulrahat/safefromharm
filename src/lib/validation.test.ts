@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { registrationSchema, type RegistrationMessages } from "@/lib/validation";
+import { contentModuleSchema, registrationSchema, type RegistrationMessages } from "@/lib/validation";
 
 const messages: RegistrationMessages = {
   fullNameBn: "Bangla name required",
@@ -84,5 +84,75 @@ describe("registrationSchema", () => {
         expect.arrayContaining(["phone", "consent"])
       );
     }
+  });
+});
+
+describe("contentModuleSchema", () => {
+  it("loads baseline version snapshots containing nullable legacy fields", () => {
+    const parsed = contentModuleSchema.safeParse({
+      slug: "sample-module",
+      audience: "ROVER",
+      titleBn: "নমুনা",
+      titleEn: "Sample",
+      descriptionBn: "বিবরণ",
+      descriptionEn: "Description",
+      videoId: "https://youtu.be/aqz-KE-bpKQ",
+      passMark: null,
+      published: true,
+      steps: [
+        {
+          id: "question-1",
+          type: "MCQ",
+          promptBn: "প্রশ্ন",
+          promptEn: "Question",
+          options: [{ id: "a", bn: "ক", en: "A" }, { id: "b", bn: "খ", en: "B" }],
+          correctOptionId: "a",
+          correctOptionIds: null,
+          explanationBn: "",
+          explanationEn: "",
+          points: 1,
+          minWords: 30,
+        },
+        {
+          id: "question-2",
+          type: "REFLECTION",
+          promptBn: "লিখুন",
+          promptEn: "Write",
+          options: null,
+          correctOptionId: null,
+          correctOptionIds: null,
+          explanationBn: "",
+          explanationEn: "",
+          points: 1,
+          minWords: 30,
+        },
+      ],
+    });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.videoId).toBe("aqz-KE-bpKQ");
+      expect(parsed.data.steps[1].options).toBeNull();
+      expect(parsed.data.mustWatch).toBe(true);
+    }
+  });
+
+  it("requires all selected options for a multi-select answer key", () => {
+    const result = contentModuleSchema.safeParse({
+      slug: "multi-select",
+      audience: "LEADER",
+      titleBn: "শিরোনাম",
+      titleEn: "Title",
+      descriptionBn: "বিবরণ",
+      descriptionEn: "Description",
+      videoId: "aqz-KE-bpKQ",
+      steps: [{
+        type: "MULTI_SELECT",
+        promptBn: "প্রশ্ন",
+        promptEn: "Question",
+        options: [{ id: "a", bn: "ক", en: "A" }, { id: "b", bn: "খ", en: "B" }],
+        correctOptionIds: ["a", "missing"],
+      }],
+    });
+    expect(result.success).toBe(false);
   });
 });
